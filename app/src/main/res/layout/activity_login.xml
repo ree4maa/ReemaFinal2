@@ -80,8 +80,8 @@
                     android:id="@+id/Etext1"
                     android:layout_width="334dp"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
                     android:textColor="#4A2A44"
+                    android:inputType="textEmailAddress"
                     android:textColorHint="#6D5A68"
 
                     />
@@ -144,7 +144,8 @@
                 android:backgroundTint="#FDD0F3"
                 android:text="@string/sign_up"
                 android:textColor="#E94F9D"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                />
 
         </LinearLayout>
     </ScrollView>

@@ -34,14 +34,15 @@
                 android:contentDescription="@string/icon"
                 android:padding="12dp"
                 android:scrollbarSize="8dp"
-                android:src="@mipmap/ic_launcher_foreground1" />
+                android:src="@mipmap/ic_launcher_foreground1"
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
                 android:id="@+id/TV_creat"
                 android:layout_width="234dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="16dp"
-                android:text="Create your account"
+                android:text="@string/create_your_account"
                 android:textColor="#463471"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -52,16 +53,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="@string/full_name"
             app:boxStrokeColor="#FFAAB7"
             app:startIconTint="@color/purple_200">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/TV_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="enter your full name"
                 android:inputType="textPersonName"
+                android:textColorHint="#616161"
                 tools:ignore="TouchTargetSizeCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,16 +72,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="@string/email"
             app:boxStrokeColor="#FFAAB7"
             app:startIconTint="@color/purple_200">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/TV_email"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:hint="enter your email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textColor="#FAF9F9"
+                android:textColorHint="#616161" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- 🔒 كلمة المرور -->
@@ -89,7 +91,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="@string/create_password"
             app:boxStrokeColor="#FFAAB7"
             app:endIconMode="password_toggle"
             app:startIconTint="@color/purple_200" >
@@ -97,10 +98,10 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/TV_password"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="enter you password"
                 android:inputType="textPassword"
-                tools:ignore="TouchTargetSizeCheck" />
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- 🌈 زر التسجيل -->
@@ -114,7 +115,7 @@
             android:backgroundTint="#FDD0F3"
             android:elevation="6dp"
             android:text="@string/Sign_up"
-            android:textColor="#FF69B4"
+            android:textColor="#E91E63"
             android:textStyle="bold" />
 
         <Button

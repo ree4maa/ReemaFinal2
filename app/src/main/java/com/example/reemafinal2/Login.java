@@ -41,6 +41,7 @@ private Button btn_sign;
         Etext2 = findViewById(R.id.Etext2);
         TV_sign = findViewById(R.id.TV_sign);
         btn_log = findViewById(R.id.btn_log);
+        btn_sign= findViewById(R.id.btn_sign);
         btn_log.setOnClickListener(new View.OnClickListener() {
 
             @Override

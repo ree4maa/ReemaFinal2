@@ -30,4 +30,5 @@
     <string name="this_is_competition_fragment1">this is competition fragment</string>
     <string name="this_is_level_fragment">this is level fragment</string>
     <string name="this_is_rewards_fragment">this is rewards fragment</string>
+    <string name="create_your_account">Create your account</string>
 </resources>
