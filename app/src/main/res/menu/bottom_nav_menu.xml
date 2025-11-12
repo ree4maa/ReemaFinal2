@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_quests"
+        android:icon="@drawable/ic_quests"
+        android:title="@string/quests" />
+
+    <item
+        android:id="@+id/nav_level"
+        android:icon="@drawable/ic_level"
+        android:title="@string/level" />
+
+    <item
+        android:id="@+id/nav_rewards"
+        android:icon="@drawable/ic_rewards"
+        android:title="@string/rewards" />
+
+    <item
+        android:id="@+id/nav_competition"
+        android:icon="@drawable/ic_competition"
+        android:title="@string/competition" />
+
+</menu>
