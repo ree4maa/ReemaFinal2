@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5EE"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFEFE"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- 🌸 الأيقونة العلوية -->
+
+        <!-- 🧍 الاسم الكامل -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:layout_width="121dp"
+                android:layout_height="105dp"
+                android:backgroundTint="#FFC0CB"
+                android:contentDescription="@string/icon"
+                android:padding="12dp"
+                android:scrollbarSize="8dp"
+                android:src="@mipmap/ic_launcher_foreground1" />
+
+            <TextView
+                android:id="@+id/TV_creat"
+                android:layout_width="234dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:text="Create your account"
+                android:textColor="#463471"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/full_name"
+            app:boxStrokeColor="#FFAAB7"
+            app:startIconTint="@color/purple_200">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/TV_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="enter your full name"
+                android:inputType="textPersonName"
+                tools:ignore="TouchTargetSizeCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ✉️ البريد الإلكتروني -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/email"
+            app:boxStrokeColor="#FFAAB7"
+            app:startIconTint="@color/purple_200">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/TV_email"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="enter your email"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 🔒 كلمة المرور -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/create_password"
+            app:boxStrokeColor="#FFAAB7"
+            app:endIconMode="password_toggle"
+            app:startIconTint="@color/purple_200" >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/TV_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="enter you password"
+                android:inputType="textPassword"
+                tools:ignore="TouchTargetSizeCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 🌈 زر التسجيل -->
+
+        <!-- ⚙️ نص تسجيل الدخول -->
+        <Button
+            android:id="@+id/btn_signup"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#FDD0F3"
+            android:elevation="6dp"
+            android:text="@string/Sign_up"
+            android:textColor="#FF69B4"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_Login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#FDFCFC"
+            android:text="already have an account?log in"
+            android:textAlignment="center"
+            android:textColor="#FF69B4"
+            android:textSize="14sp" />
+    </LinearLayout>
+</ScrollView>

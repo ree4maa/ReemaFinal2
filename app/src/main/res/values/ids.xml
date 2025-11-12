@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="nav_quests" type="id">nav_quests</item>
+    <item name="nav_level" type="id">nav_level</item>
+    <item name="nav_rewards" type="id">nav_rewards</item>
+    <item name="nav_competition" type="id">nav_competition</item>
+    <item name="fragment_container" type="id">fragment_container</item>
+</resources>

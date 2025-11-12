@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">ReemaFinal2</string>
+    <string name="todo">todo</string>
+    <string name="welcome_back">welcome_back</string>
+    <string name="log_in">log_in</string>
+    <string name="don_t_have_an_account">don_t_have_an_account</string>
+    <string name="sign_up">sign_up</string>
+    <string name="full_name">full_name</string>
+    <string name="enter_your_full_name">enter_your_full_name</string>
+    <string name="email">email</string>
+    <string name="enter_your_email">enter_your_email</string>
+    <string name="create_password">create_password</string>
+    <string name="enter_your_password">enter_your_password</string>
+    <string name="Sign_up">Sign_up</string>
+    <string name="already_have_an_account_log_in">already_have_an_account_log_in</string>
+    <string name="Create_your_account">Create_your_account</string>
+    <string name="icon">icon</string>
+    <string name="this_is_competition_fragment">this_is_competition_fragment</string>
+    <string name="this_is_level_fragment">this_is_level_fragment</string>
+    <string name="this_is_quests_fragment">this_is_quests_fragment</string>
+    <string name="this_is_rewards_fragment">this_is_rewards_fragment</string>
+</resources>

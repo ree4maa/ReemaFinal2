@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <!-- This is the NEW, correct theme -->
+    <style name="Base.Theme.ReemaFinal2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.ReemaFinal2" parent="Base.Theme.ReemaFinal2" />
+</resources>
