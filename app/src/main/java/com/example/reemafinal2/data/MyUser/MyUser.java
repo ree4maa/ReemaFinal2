@@ -54,6 +54,14 @@ import androidx.room.PrimaryKey;
         public void setPassword(String password) {
             this.password = password;
         }
+
+        public long getKeyid() {
+            return keyid;
+        }
+
+        public void setKeyid(long keyid) {
+            this.keyid = keyid;
+        }
     }
 
 
