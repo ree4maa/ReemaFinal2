@@ -25,5 +25,6 @@ void update(MyTask... users);
 @Query("Delete From MyTask WHERE keyid=:id ")
 void delete(int id);
 
-List<MyTaskQuery> getTaskByUserId(String userId);
+    @Query("SELECT * FROM MyTask WHERE userId = :userId")
+    List<MyTask> getTasksByUserId(String userId);
 }

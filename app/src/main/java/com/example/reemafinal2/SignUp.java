@@ -44,13 +44,16 @@ public class SignUp extends AppCompatActivity {
         btnLogin = findViewById(R.id.btn_Login);
 
         // Set click listeners
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SignUp.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
+       btnSignUp.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               if (validateFields()) {
+                   // Navigate to login screen
+                   Intent intent = new Intent(SignUp.this, MainActivity.class);
+                   startActivity(intent);
+               }
+           }
+       });
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,5 +70,35 @@ public class SignUp extends AppCompatActivity {
          //   v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
           //  return insets;
       //  });
+    }
+
+    private boolean validateFields() {
+        boolean isValid = true;
+        String name = nameInput.getText().toString().trim();
+        String email = emailInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
+
+        if (name.isEmpty()) {
+            nameLayout.setError("Name is required");
+            isValid = false;
+        } else {
+            nameLayout.setError(null);
+        }
+
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailLayout.setError("Valid email is required");
+            isValid = false;
+        } else {
+            emailLayout.setError(null);
+        }
+
+        if (password.isEmpty() || password.length() < 8) {
+            passwordLayout.setError("Password at least 8 characters");
+            isValid = false;
+        } else {
+            passwordLayout.setError(null);
+        }
+
+        return isValid;
     }
 }
