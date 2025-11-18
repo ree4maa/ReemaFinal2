@@ -42,6 +42,7 @@ private Button btn_sign;
         TV_sign = findViewById(R.id.TV_sign);
         btn_log = findViewById(R.id.btn_log);
         btn_sign= findViewById(R.id.btn_sign);
+
         btn_log.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -63,5 +64,29 @@ private Button btn_sign;
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
     }
+    private boolean validateFields() {
+        boolean isValid = true;
+
+        String emailText = Etext1.getText().toString().trim();
+        String passwordText = Etext2.getText().toString().trim();
+
+        if (emailText.isEmpty()) {
+            emailLayout.setError("Email is required");
+            isValid = false;
+        } else {
+            emailLayout.setError(null);
+        }
+
+        if (passwordText.isEmpty()) {
+            passwordLayout.setError("Password is required");
+            isValid = false;
+        } else {
+            passwordLayout.setError(null);
+        }
+
+        return isValid;
+    }
+
 }
