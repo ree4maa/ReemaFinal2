@@ -10,8 +10,6 @@ import com.example.reemafinal2.data.MyTasksTable.MyTask;
 import com.example.reemafinal2.data.MyTasksTable.MyTaskQuery;
 import com.example.reemafinal2.data.MyUser.MyUser;
 import com.example.reemafinal2.data.MyUser.MyUserQuery;
-
-public class AppDatabase {
     @Database(entities = {MyUser.class, MyTask.class,}, version = 1)
     public abstract class AppDatabase extends RoomDatabase {
         private static AppDatabase dp;
@@ -27,4 +25,4 @@ public class AppDatabase {
             return dp;
         }
     }
-}
+
