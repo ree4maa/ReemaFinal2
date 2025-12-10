@@ -16,36 +16,36 @@ public class MainActivity extends AppCompatActivity {
 
            BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // عرض أول Fragment عند فتح التطبيق
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.fragment_container, new QuestsFragment())
-//                .commit();
+       //  عرض أول Fragment عند فتح التطبيق
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new QuestsFragment())
+                .commit();
 
-//        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull android.view.MenuItem item) {
-//                Fragment selectedFragment = null;
-//                int id = item.getItemId();
-//
-//                if (id == R.id.nav_quests) {
-//                    selectedFragment = new QuestsFragment();
-//                } else if (id == R.id.nav_level) {
-//                    selectedFragment = new LevelFragment();
-//                } else if (id == R.id.nav_rewards) {
-//                    selectedFragment = new RewardsFragment();
-//                } else if (id == R.id.nav_competition) {
-//                    selectedFragment = new CompetitionFragment();
-//                }
-//
-//                if (selectedFragment != null) {
-//                    getSupportFragmentManager().beginTransaction()
-//                            .replace(R.id.fragment_container, selectedFragment)
-//                            .commit();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-//    }
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull android.view.MenuItem item) {
+                Fragment selectedFragment = null;
+                int id = item.getItemId();
+
+                if (id == R.id.nav_quests) {
+                    selectedFragment = new QuestsFragment();
+                } else if (id == R.id.nav_level) {
+                    selectedFragment = new LevelFragment();
+                } else if (id == R.id.nav_rewards) {
+                    selectedFragment = new RewardsFragment();
+                } else if (id == R.id.nav_competition) {
+                    selectedFragment = new CompetitionFragment();
+                }
+
+                if (selectedFragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, selectedFragment)
+                            .commit();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
-}
+    }
+

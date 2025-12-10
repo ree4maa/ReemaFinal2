@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-    public class MyTask {
+    public class MyQuest {
     @PrimaryKey(autoGenerate = true)
     public long Keyid;
   public String title;

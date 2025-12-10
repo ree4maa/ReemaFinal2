@@ -22,9 +22,9 @@
         android:background="@android:color/white"
         app:itemIconTint="@color/nav_item_color"
         app:itemTextColor="@color/black"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu"
-        tools:layout_editor_absoluteX="0dp"
-        app:labelVisibilityMode="labeled"/>
+        tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
