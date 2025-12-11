@@ -9,14 +9,12 @@ import androidx.room.PrimaryKey;
     @PrimaryKey(autoGenerate = true)
     public long Keyid;
   public String title;
-  public String description;
   public String time;
   public boolean isCompleted;
   public String userId;
-  public String subjId;
+  public String subject;
   public String gameId;
-  public String noteId;
-  public String catagory;
+  public String note;
   public int rewardpoints;
 
     @NonNull
@@ -25,14 +23,12 @@ import androidx.room.PrimaryKey;
         return "MyTask{" +
                 "Keyid=" + Keyid +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
                 ", time='" + time + '\'' +
                 ", isCompleted=" + isCompleted +
                 ", userId='" + userId + '\'' +
-                ", subjId='" + subjId + '\'' +
+                ", subjId='" + subject + '\'' +
                 ", gameId='" + gameId + '\'' +
-                ", noteId='" + noteId + '\'' +
-                ", catagory='" + catagory + '\'' +
+                ", noteId='" + note + '\'' +
                 ", rewardpoints=" + rewardpoints +
                 '}';
     }
@@ -45,13 +41,6 @@ import androidx.room.PrimaryKey;
         Keyid = keyid;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public boolean isCompleted() {
         return isCompleted;
@@ -61,12 +50,12 @@ import androidx.room.PrimaryKey;
         isCompleted = completed;
     }
 
-    public String getSubjId() {
-        return subjId;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setSubjId(String subjId) {
-        this.subjId = subjId;
+    public void setSubject(String subjId) {
+        this.subject = subjId;
     }
 
     public String getTitle() {
@@ -101,20 +90,12 @@ import androidx.room.PrimaryKey;
         this.gameId = gameId;
     }
 
-    public String getNoteId() {
-        return noteId;
+    public String getNote() {
+        return note;
     }
 
-    public void setNoteId(String noteId) {
-        this.noteId = noteId;
-    }
-
-    public String getCatagory() {
-        return catagory;
-    }
-
-    public void setCatagory(String catagory) {
-        this.catagory = catagory;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public int getRewardpoints() {

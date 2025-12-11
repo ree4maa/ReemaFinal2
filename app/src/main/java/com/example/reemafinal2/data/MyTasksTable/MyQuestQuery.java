@@ -18,8 +18,8 @@ public interface MyQuestQuery {
     @Query("SELECT * FROM MyQuest WHERE isCompleted = :isCompleted")
     List<MyQuest> getTasksByIsCompleted(boolean isCompleted);
 
-    @Query("SELECT * FROM MyQuest WHERE title = :title")
-    List<MyQuest> getTasksByTitle(String title);
+    @Query("SELECT * FROM MyQuest WHERE title LIKE :title")
+    List<MyQuest> getTasksByTitleContains(String title);
 
 }
 
