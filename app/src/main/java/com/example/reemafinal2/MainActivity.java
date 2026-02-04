@@ -16,6 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,10 +34,9 @@ public class MainActivity extends AppCompatActivity {
         QuestAdapter = new MyQuestAdapter(this, R.layout.quest_item_layout);
         lstQuests.setAdapter(QuestAdapter);
 
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-           BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-
-       //  عرض أول Fragment عند فتح التطبيق
+        //  عرض أول Fragment عند فتح التطبيق
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new QuestsFragment())
                 .commit();
@@ -66,13 +66,15 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        protected void onResume() {
-            super.onResume();
-            List<MyQuest> allQuests = AppDatabase.getDp(this).getMyQuestQuery().getAllQuests();
-            QuestAdapter.clear();
-            QuestAdapter.addAll(allQuests);
-            QuestAdapter.notifyDataSetChanged();
-        }
-    }
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<MyQuest> allQuests = AppDatabase.getDp(this).myTaskQuery().getAllTasks();
+        QuestAdapter.clear();
+        QuestAdapter.addAll(allQuests);
+        QuestAdapter.notifyDataSetChanged();
+    }
+}

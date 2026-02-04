@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.reemafinal2.R;
+
 public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
     private final int itemLayout;
 
@@ -26,24 +28,29 @@ public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
         View vitem = convertView;
         if (vitem == null) {
             vitem = LayoutInflater.from(getContext()).inflate(itemLayout, parent, false);
-       ImageView imageview = vitem.findViewById(R.id.imgvitm);
+        }
+            ImageView imageview = vitem.findViewById(R.id.imgvitm);
             TextView tvtitle = vitem.findViewById(R.id.TV_title);
-            TextView tvtime = vitem.findViewById(R.id.TV_time);
-            TextView tvgameid = vitem.findViewById(R.id.TV_gameID);
-            TextView tvRewardpoints = vitem.findViewById(R.id.TV_rewardp);
-            ImageButton btnstart = vitem.findViewById(R.id.btn_start);
-            ImageButton btnretry = vitem.findViewById(R.id.btn_retry);
-            ImageButton btnstop = vitem.findViewById(R.id.btn_stop);
-            MyQuest current=getItem(position);
+            TextView tvtime = vitem.findViewById(R.id.TT_time);
+            TextView tvgameid = vitem.findViewById(R.id.TN_gameID);
+            TextView tvRewardpoints = vitem.findViewById(R.id.TN_Rewardpoints);
+            ImageButton btnstart = vitem.findViewById(R.id.IB_start);
+            ImageButton btnretry = vitem.findViewById(R.id.IB_retry);
+            ImageButton btnstop = vitem.findViewById(R.id.IB_stop);
+
+            MyQuest current = getItem(position);
             tvtitle.setText(current.getTitle());
             tvtime.setText(current.getTime());
             tvgameid.setText(current.getGameId());
             tvRewardpoints.setText(current.getRewardpoints());
+
             return vitem;
 
         }
     }
-}
+
+
+
 
 
 
