@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "209938923801",
+    "project_id": "reemafinal2",
+    "storage_bucket": "reemafinal2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209938923801:android:df1c3e07a8f3136fa20588",
+        "android_client_info": {
+          "package_name": "com.example.reemafinal2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4u3lQ4vm_Zfd0W2X51gEa1Dw5p7vo5K0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

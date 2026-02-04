@@ -15,6 +15,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.reemafinal2.data.AppDatabase;
+import com.example.reemafinal2.data.MyUser.MyUser;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -97,8 +99,9 @@ public class Login extends AppCompatActivity {
         }
 
         // 2. التحقق من حقل كلمة المرور
-        if (password.isEmpty()) {
+        if (password.isEmpty()|| email.isEmpty()) {
             passwordLayout.setError("Valid password is required");
+            emailLayout.setError("Valid email is required");
             isValid = false;
         } else if (password.length() < 6) {
             passwordLayout.setError("password at least 8 characters");
@@ -106,6 +109,14 @@ public class Login extends AppCompatActivity {
         } else {
             // إذا كان الحقل صحيحاً، قم بإزالة رسالة الخطأ
             passwordLayout.setError(null);
+        }
+
+        MyUser myUser = AppDatabase.getDp(this).myUserQuery().checkEmailPassword(email,password);
+        if (myUser!= null){
+            Toast.makeText(this,"login successful",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            startActivity(intent);
+            return true;
         }
 
         return isValid;

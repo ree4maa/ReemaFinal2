@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.reemafinal2" />
+                  <option name="mobileSdkAppId" value="1:209938923801:android:df1c3e07a8f3136fa20588" />
+                  <option name="projectId" value="reemafinal2" />
+                  <option name="projectNumber" value="209938923801" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
