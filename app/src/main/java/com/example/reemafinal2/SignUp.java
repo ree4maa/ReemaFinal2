@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -183,8 +184,18 @@ public class SignUp extends AppCompatActivity {
                         // عرض رسالة خطأ للمستخدم
                     }
                 });
+        EditText nameEditText = findViewById(R.id.TV_name);
+        EditText emailEditText = findViewById(R.id.TV_email);
+        EditText passwrdEditText = findViewById(R.id.TV_password);
+        Button addButton = findViewById(R.id.btn_signup);
 
+
+        addButton.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString();
+
+        });
     }
 }
+
 
 
