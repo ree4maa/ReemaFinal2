@@ -192,10 +192,26 @@ public class SignUp extends AppCompatActivity {
 
         addButton.setOnClickListener(v -> {
             String name = nameEditText.getText().toString();
+            String email = emailEditText.getText().toString();
 
+
+            if (!name.isEmpty() && !email.isEmpty()) {
+                MyUser newUser = new MyUser();
+                saveUser(newUser);
+
+
+                // مسح حقول الإدخال
+                nameEditText.setText("");
+                emailEditText.setText("");
+            } else {
+                Log.w(TAG, "الرجاء إدخال الاسم والبريد الإلكتروني.");
+            }
         });
+
+
     }
-}
+    }
+
 
 
 
