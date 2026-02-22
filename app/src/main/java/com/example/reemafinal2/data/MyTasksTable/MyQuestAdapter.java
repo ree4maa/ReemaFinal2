@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,20 +30,20 @@ public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
         if (vitem == null) {
             vitem = LayoutInflater.from(getContext()).inflate(itemLayout, parent, false);
         }
-            ImageView imageview = vitem.findViewById(R.id.imgvitm);
-            TextView tvtitle = vitem.findViewById(R.id.TV_title);
-            TextView tvtime = vitem.findViewById(R.id.TT_time);
-            TextView tvgameid = vitem.findViewById(R.id.TN_gameID);
-            TextView tvRewardpoints = vitem.findViewById(R.id.TN_Rewardpoints);
-            ImageButton btnstart = vitem.findViewById(R.id.IB_start);
-            ImageButton btnretry = vitem.findViewById(R.id.IB_retry);
-            ImageButton btnstop = vitem.findViewById(R.id.IB_stop);
+            ImageView imageview = vitem.findViewById(R.id.gameImage);
+            TextView tvtitle = vitem.findViewById(R.id.TV_taskType);
+            TextView TV_time = vitem.findViewById(R.id.TV_time);
+            TextView TV_score = vitem.findViewById(R.id.TV_score);
+            TextView TV_gameId = vitem.findViewById(R.id.TV_gameId);
+            TextView TV_titleGame = vitem.findViewById(R.id.TV_titleGame);
+            Button btnstart = vitem.findViewById(R.id.btnStart);
+
 
             MyQuest current = getItem(position);
             tvtitle.setText(current.getTitle());
-            tvtime.setText(current.getTime());
-            tvgameid.setText(current.getGameId());
-            tvRewardpoints.setText(current.getRewardpoints());
+            TV_time.setText(current.getTime());
+            TV_gameId.setText(current.getGameId());
+            TV_score.setText(current.getRewardpoints());
 
             return vitem;
 
