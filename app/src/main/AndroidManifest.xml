@@ -12,9 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ReemaFinal2">
         <activity
-            android:name=".AddQuest0"
-            android:exported="false" />
-        <activity
             android:name=".AddQuest"
             android:exported="false" />
         <activity

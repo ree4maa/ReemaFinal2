@@ -1,7 +1,10 @@
 package com.example.reemafinal2;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
@@ -24,22 +27,35 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabAddQuest;
     private ListView lstQuests;
     private MyQuestAdapter QuestAdapter;
+    private Button btnAddQuest;
+    private boolean isAdmin = true; // عدلي حسب التحقق الحقيقي من المستخدم
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        btnAddQuest = findViewById(R.id.btnAddQuest);
+
+// إظهار الزر فقط إذا كان المستخدم Admin
+        if (isAdmin) {
+            btnAddQuest.setVisibility(View.VISIBLE);
+        } else {
+            btnAddQuest.setVisibility(View.GONE);
+        }
+
+// عند الضغط على الزر → فتح AddQuest
+        btnAddQuest.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddQuest.class);
+            startActivity(intent);
+        });
         lstQuests = findViewById(R.id.lstQuest);
         QuestAdapter = new MyQuestAdapter(this, R.layout.quest_item_layout);
         lstQuests.setAdapter(QuestAdapter);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        //  عرض أول Fragment عند فتح التطبيق
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new QuestsFragment())
-                .commit();
+
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
