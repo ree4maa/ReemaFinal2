@@ -42,7 +42,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etQuestTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="53dp"
                 android:inputType="textCapWords"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -62,12 +62,13 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etQuestTime"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
+                android:layout_height="47dp"
                 android:clickable="true"
                 android:cursorVisible="false"
+                android:focusable="false"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <!-- Subject Input -->
         <com.google.android.material.textfield.TextInputLayout
@@ -84,7 +85,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etQuestSubject"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="47dp"
                 android:inputType="textCapWords"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -104,10 +105,35 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etGameId"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="41dp"
                 android:inputType="text"
                 android:maxLines="1" />
+
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Score Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilQuestScore"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/score"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilGameId">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etQuestScore"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:inputType="number"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
 
         <!-- Note Input -->
         <com.google.android.material.textfield.TextInputLayout
@@ -121,16 +147,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilGameId">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etQuestNote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:minLines="4" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Add Quest Button -->
+
         <Button
             android:id="@+id/btnAddQuest"
             android:layout_width="0dp"
@@ -142,9 +162,28 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilQuestNote"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.809" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="402dp">
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etQuestNote"
+            android:layout_width="match_parent"
+            android:layout_height="132dp"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:minLines="4"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="411dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

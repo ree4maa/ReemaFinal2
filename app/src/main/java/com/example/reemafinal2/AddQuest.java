@@ -2,10 +2,15 @@ package com.example.reemafinal2;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.reemafinal2.data.AppDatabase;
+import com.example.reemafinal2.data.MyTasksTable.MyQuest;
+import com.example.reemafinal2.data.MyTasksTable.MyQuestQuery;
 import com.google.android.material.textfield.TextInputEditText;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
@@ -14,7 +19,7 @@ import java.util.Locale;
 public class AddQuest extends AppCompatActivity {
 
     // Declare the UI elements
-    TextInputEditText etQuestTitle, etQuestTime, etQuestSubject, etGameId, etQuestNote;
+    TextInputEditText etQuestTitle, etQuestTime, etQuestSubject, etGameId, etQuestNote,etQuestScore;
     Button btnAddQuest;
 
     @SuppressLint("MissingInflatedId")
@@ -31,6 +36,7 @@ public class AddQuest extends AppCompatActivity {
         etGameId = findViewById(R.id.etGameId);
         etQuestNote = findViewById(R.id.etQuestNote);
         btnAddQuest = findViewById(R.id.btnAddQuest);
+        etQuestScore = findViewById(R.id.etQuestScore);
 
         // 2. Set an OnClickListener for the Time field
         etQuestTime.setOnClickListener(new View.OnClickListener() {
@@ -73,30 +79,43 @@ public class AddQuest extends AppCompatActivity {
     // Method to handle saving the quest data
     //دالة مسؤولة عن جمع البيانات من الحقول النصية والتحقق منها ثم حفظ المهمة (Quest).
     private void saveQuest() {
-        // 4. Get the text from all the input fields
+        // قراءة النصوص من الحقول
         String title = etQuestTitle.getText().toString().trim();
         String time = etQuestTime.getText().toString().trim();
         String subject = etQuestSubject.getText().toString().trim();
         String gameId = etGameId.getText().toString().trim();
         String note = etQuestNote.getText().toString().trim();
 
-        // 5. Validate the required fields (e.g., Title and Time)
-        if (title.isEmpty() || time.isEmpty()) {
-            Toast.makeText(this, "Please fill in at least the Title and Time", Toast.LENGTH_SHORT).show();
-            return; // Stop the save process if validation fails
+        // قراءة السكور وتحويله إلى عدد صحيح
+        int score = 0;
+        if (!etQuestScore.getText().toString().isEmpty()) {
+            score = Integer.parseInt(etQuestScore.getText().toString());
         }
 
-        // --- DATABASE LOGIC GOES HERE ---
-        // 6. At this point, you have all the data.
-        // You would now create a new MyTask object and use your Room DAO to insert it.
-        // For now, we'll just show a success message.
+        // التحقق من الحقول المطلوبة
+        if (title.isEmpty() || time.isEmpty()) {
+            Toast.makeText(this, "Please fill in at least the Title and Time", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Toast.makeText(this, "Quest '" + title + "' saved!", Toast.LENGTH_LONG).show();
+        // إنشاء كائن MyQuest
+        MyQuest quest = new MyQuest();
+        quest.setTitle(title);
+        quest.setTime(time);
+        quest.setSubject(subject);
+        quest.setGameId(gameId);
+        quest.setNote(note);
+        quest.setRewardpoints(score); // ← هنا تضيفين السكور
 
-        // Optional: Close the activity and go back to the previous screen
-        finish();
+        // حفظ المهمة في قاعدة البيانات
+        AppDatabase.getDp(this).myTaskQuery().insertMyQuest(quest);
+
+        Toast.makeText(this, "Quest saved successfully!", Toast.LENGTH_LONG).show();
+
+        finish(); // الرجوع للـ MainActivity
     }
-}
+    }
+
 //- قراءة النصوص من الحقول: العنوان، الوقت، الموضوع، رقم اللعبة، الملاحظات.
 //- التحقق من أن الحقول الأساسية (العنوان والوقت) ليست فارغة.
 //- إذا كانت فارغة → إظهار رسالة خطأ باستخدام Toast.

@@ -1,6 +1,7 @@
 package com.example.reemafinal2.data.MyTasksTable;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public interface MyQuestQuery {
 
     @Query("SELECT * FROM MyQuest WHERE title LIKE :title")
     List<MyQuest> getTasksByTitleContains(String title);
+
+    @Insert
+    long insertMyQuest(MyQuest quest);
 
 }
 
