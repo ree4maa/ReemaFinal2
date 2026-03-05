@@ -1,0 +1,323 @@
+@startuml
+class com.example.reemafinal2.MainActivity {
+- Spinner spnQuests
+- FloatingActionButton fabAddQuest
+- ListView lstQuests
+- MyQuestAdapter QuestAdapter
+- Button btnAddQuest
+- boolean isAdmin
+# void onCreate(Bundle)
+# void onResume()
+}
+note left of com.example.reemafinal2.MainActivity::isAdmin
+ عدلي حسب التحقق الحقيقي من المستخدم
+end note
+
+
+class com.example.reemafinal2.data.MyUser.MyUser {
++ long keyid
++ String fullName
++ String email
++ String password
++ String id
++ String toString()
++ String getFullName()
++ void setFullName(String)
++ String getEmail()
++ void setEmail(String)
++ String getPassword()
++ void setPassword(String)
++ String getId()
++ void setId(String)
++ long getKeyid()
++ void setKeyid(long)
+}
+note top of com.example.reemafinal2.data.MyUser.MyUser
+
+     * فئة تمثل المستعمل
+     
+end note
+
+note left of com.example.reemafinal2.data.MyUser.MyUser::email
+بحالة لم يتم اعطاء اسم للعامود يكون اسم الصفه هو اسم العامود
+end note
+
+
+class com.example.reemafinal2.SplashScreen {
+# void onCreate(Bundle)
+}
+
+class com.example.reemafinal2.data.MyTasksTable.MyQuest {
++ long Keyid
++ String title
++ String time
++ boolean isCompleted
++ String userId
++ String subject
++ String gameId
++ String note
++ int rewardpoints
++ String toString()
++ long getKeyid()
++ void setKeyid(long)
++ boolean isCompleted()
++ void setCompleted(boolean)
++ String getSubject()
++ void setSubject(String)
++ String getTitle()
++ void setTitle(String)
++ String getTime()
++ void setTime(String)
++ String getUserId()
++ void setUserId(String)
++ String getGameId()
++ void setGameId(String)
++ String getNote()
++ void setNote(String)
++ int getRewardpoints()
++ void setRewardpoints(int)
+}
+
+
+abstract class com.example.reemafinal2.data.AppDatabase {
+- {static} AppDatabase dp
++ {abstract}MyUserQuery myUserQuery()
++ {abstract}MyQuestQuery myTaskQuery()
++ {static} AppDatabase getDp(Context)
+}
+
+
+class com.example.reemafinal2.RewardsFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
++ {static} RewardsFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+note top of com.example.reemafinal2.RewardsFragment
+
+ * A simple {@link Fragment} subclass.
+ * Use the {@link RewardsFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ 
+end note
+
+note left of com.example.reemafinal2.RewardsFragment::ARG_PARAM1
+ the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+end note
+note right of com.example.reemafinal2.RewardsFragment::mParam1
+ TODO: Rename and change types of parameters
+end note
+
+note left of com.example.reemafinal2.RewardsFragment::newInstance(String,String)
+يذكّرك بأنك قد تحتاج لتغيير اسم المعاملات (parameters) أو نوعها أو عددها في دالة newInstance().
+end note
+
+class com.example.reemafinal2.QuestsFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
++ {static} QuestsFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+note top of com.example.reemafinal2.QuestsFragment
+
+ * QuestsFragment
+ * هذا الـ Fragment مسؤول عن عرض قائمة المهام (Quests) في التطبيق.
+ * يمكن إنشاء نسخة جديدة منه باستخدام الدالة newInstance().
+ 
+end note
+
+note left of com.example.reemafinal2.QuestsFragment::ARG_PARAM1
+ الثوابت التي تُستخدم كـ Keys لتمرير البيانات إلى Fragment عند إنشائه
+end note
+note right of com.example.reemafinal2.QuestsFragment::mParam1
+ المتغيرات التي ستستقبل القيم الممررة عند إنشاء Fragment
+end note
+
+note left of com.example.reemafinal2.QuestsFragment::newInstance(String,String)
+
+     * طريقة المصنع (Factory Method) لإنشاء نسخة جديدة من QuestsFragment مع تمرير بارامترات
+     * @param param1 المعطى الأول
+     * @param param2 المعطى الثاني
+     * @return نسخة جديدة من QuestsFragment
+     
+end note
+note right of com.example.reemafinal2.QuestsFragment::onCreate(Bundle)
+ ---------------------------------------------------------------------------------------------
+end note
+note left of com.example.reemafinal2.QuestsFragment::onCreateView(LayoutInflater,ViewGroup,Bundle)
+ ---------------------------------------------------------------------------------------------
+end note
+
+class com.example.reemafinal2.data.MyTasksTable.MyQuestAdapter {
+- int itemLayout
++ View getView(int,View,ViewGroup)
+}
+
+
+class com.example.reemafinal2.CompetitionFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
++ {static} CompetitionFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+note top of com.example.reemafinal2.CompetitionFragment
+
+ * A simple {@link Fragment} subclass.
+ * Use the {@link CompetitionFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ 
+end note
+
+note left of com.example.reemafinal2.CompetitionFragment::ARG_PARAM1
+ the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+end note
+note right of com.example.reemafinal2.CompetitionFragment::mParam1
+ TODO: Rename and change types of parameters
+end note
+
+note left of com.example.reemafinal2.CompetitionFragment::newInstance(String,String)
+ TODO: Rename and change types and number of parameters
+end note
+
+interface com.example.reemafinal2.data.MyUser.MyUserQuery {
+~ List<MyUser> getAll()
+~ List<MyUser> loadAllByIds(int[])
+~ MyUser checkEmailPassword(String,String)
+~ MyUser checkEmail(String)
+~ void insertAll(MyUser)
+~ void delete(MyUser)
+~ void delete(int)
+~ void insert(MyUser)
+~ void update(MyUser)
+}
+note left of com.example.reemafinal2.data.MyUser.MyUserQuery::getAll()
+استخراج جميع المستعملين
+end note
+note right of com.example.reemafinal2.data.MyUser.MyUserQuery::loadAllByIds(int[])
+ استخراج مستعمل حسب رقم المميز لهid
+end note
+note left of com.example.reemafinal2.data.MyUser.MyUserQuery::checkEmailPassword(String,String)
+هل المستعمل موجود حسب الايميل وكلمة السر
+end note
+note right of com.example.reemafinal2.data.MyUser.MyUserQuery::checkEmail(String)
+فحص هل الايميل موجود من قبل
+end note
+note left of com.example.reemafinal2.data.MyUser.MyUserQuery::delete(int)
+حذف حسب الرقم المميز id
+end note
+
+interface com.example.reemafinal2.data.MyTasksTable.MyQuestQuery {
+~ List<MyQuest> getAllTasks()
+~ List<MyQuest> getTasksByUserId(String)
+~ List<MyQuest> getTasksByGameId(String)
+~ List<MyQuest> getTasksByIsCompleted(boolean)
+~ List<MyQuest> getTasksByTitleContains(String)
+~ long insertMyQuest(MyQuest)
+}
+
+class com.example.reemafinal2.LevelFragment {
+- {static} String ARG_PARAM1
+- {static} String ARG_PARAM2
+- String mParam1
+- String mParam2
++ {static} LevelFragment newInstance(String,String)
++ void onCreate(Bundle)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
+}
+note top of com.example.reemafinal2.LevelFragment
+
+ * A simple {@link Fragment} subclass.
+ * Use the {@link LevelFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ 
+end note
+
+note left of com.example.reemafinal2.LevelFragment::ARG_PARAM1
+ the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+end note
+note right of com.example.reemafinal2.LevelFragment::mParam1
+ TODO: Rename and change types of parameters
+end note
+
+note left of com.example.reemafinal2.LevelFragment::newInstance(String,String)
+ TODO: Rename and change types and number of parameters
+end note
+
+class com.example.reemafinal2.SignUp {
+- TextInputLayout nameLayout
+- TextInputLayout emailLayout
+- TextInputLayout passwordLayout
+- TextView nameInput
+- TextView emailInput
+- TextView passwordInput
+- Button btnSignUp
+- Button btnLogin
+# void onCreate(Bundle)
+- boolean validateFields()
++ void saveUser(MyUser)
+}
+
+
+class com.example.reemafinal2.AddQuest {
+~ TextInputEditText etQuestTitle
+~ Button btnAddQuest
+# void onCreate(Bundle)
+- void showTimePickerDialog()
+- void saveQuest()
+}
+note left of com.example.reemafinal2.AddQuest::etQuestTitle
+ Declare the UI elements
+end note
+
+note left of com.example.reemafinal2.AddQuest::showTimePickerDialog()
+• 	عند اختيار المستخدم للوقت، يتم تنسيقه على شكل  (24 ساعة) ووضعه في حقل النص .
+end note
+note right of com.example.reemafinal2.AddQuest::saveQuest()
+دالة مسؤولة عن جمع البيانات من الحقول النصية والتحقق منها ثم حفظ المهمة (Quest).
+end note
+
+class com.example.reemafinal2.Login {
+- TextInputLayout emailLayout
+- TextInputLayout passwordLayout
+- TextInputEditText emailEditText
+- TextInputEditText passwordEditText
+- Button loginButton
+- TextView signUpText
+- Button signUpButton
+# void onCreate(Bundle)
+- boolean validateFields()
+}
+note left of com.example.reemafinal2.Login::emailLayout
+ تم تغيير اسماء المتغيرات لتكون أوضح
+end note
+
+note left of com.example.reemafinal2.Login::validateFields()
+
+     * دالة للتحقق من صحة حقول الإدخال (الايميل وكلمة المرور).
+     * @return true إذا كانت جميع الحقول صالحة, و false إذا كان هناك خطأ.
+     
+end note
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.example.reemafinal2.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.example.reemafinal2.SplashScreen
+androidx.room.RoomDatabase <|-- com.example.reemafinal2.data.AppDatabase
+androidx.fragment.app.Fragment <|-- com.example.reemafinal2.RewardsFragment
+androidx.fragment.app.Fragment <|-- com.example.reemafinal2.QuestsFragment
+android.widget.ArrayAdapter <|-- com.example.reemafinal2.data.MyTasksTable.MyQuestAdapter
+androidx.fragment.app.Fragment <|-- com.example.reemafinal2.CompetitionFragment
+androidx.fragment.app.Fragment <|-- com.example.reemafinal2.LevelFragment
+androidx.appcompat.app.AppCompatActivity <|-- com.example.reemafinal2.SignUp
+androidx.appcompat.app.AppCompatActivity <|-- com.example.reemafinal2.AddQuest
+androidx.appcompat.app.AppCompatActivity <|-- com.example.reemafinal2.Login
+@enduml
