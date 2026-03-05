@@ -8,56 +8,77 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link QuestsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * QuestsFragment
+ * هذا الـ Fragment مسؤول عن عرض قائمة المهام (Quests) في التطبيق.
+ * يمكن إنشاء نسخة جديدة منه باستخدام الدالة newInstance().
  */
 public class QuestsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // ---------------------------------------------------------------------------------------------
+    // الثوابت التي تُستخدم كـ Keys لتمرير البيانات إلى Fragment عند إنشائه
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    // ---------------------------------------------------------------------------------------------
+    // المتغيرات التي ستستقبل القيم الممررة عند إنشاء Fragment
     private String mParam1;
     private String mParam2;
 
+    // ---------------------------------------------------------------------------------------------
+    // Constructor فارغ مطلوب للـ Fragment
     public QuestsFragment() {
         // Required empty public constructor
     }
 
+    // ---------------------------------------------------------------------------------------------
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuestsFragment.
+     * طريقة المصنع (Factory Method) لإنشاء نسخة جديدة من QuestsFragment مع تمرير بارامترات
+     * @param param1 المعطى الأول
+     * @param param2 المعطى الثاني
+     * @return نسخة جديدة من QuestsFragment
      */
-    // TODO: Rename and change types and number of parameters
     public static QuestsFragment newInstance(String param1, String param2) {
         QuestsFragment fragment = new QuestsFragment();
+
+        // إنشاء Bundle لتخزين البيانات الممررة للـ Fragment
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, param1); // تخزين param1
+        args.putString(ARG_PARAM2, param2); // تخزين param2
+
+        // ربط الـ Bundle بالـ Fragment
         fragment.setArguments(args);
+
         return fragment;
     }
 
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // قراءة القيم الممررة عند إنشاء الـ Fragment، إذا كانت موجودة
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
+    // ---------------------------------------------------------------------------------------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // ربط الـ Fragment بالـ layout الخاص به (fragment_quests.xml)
         return inflater.inflate(R.layout.fragment_quests, container, false);
     }
 }
+//ARG_PARAM1 / ARG_PARAM2 → مفاتيح لتمرير البيانات للـ Fragment.
+//
+//mParam1 / mParam2 → المتغيرات التي تخزن البيانات الممررة.
+//
+//Constructor فارغ → مطلوب دائمًا للـ Fragment.
+//
+//newInstance() → لإنشاء نسخة جديدة من الـ Fragment مع تمرير أي بيانات.
+//
+//onCreate() → يتم استدعاؤه عند إنشاء Fragment، ويقرأ البيانات الممررة.
+//
+//onCreateView() → يعرض الـ layout الخاص بالـ Fragment.

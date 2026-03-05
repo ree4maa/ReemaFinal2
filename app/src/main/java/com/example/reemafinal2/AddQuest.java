@@ -30,6 +30,7 @@ public class AddQuest extends AppCompatActivity {
         setContentView(R.layout.activity_add_quest);
 
         // 1. Initialize the UI elements by finding them in the layout
+        // 1. تهيئة عناصر واجهة المستخدم من خلال العثور عليها في ملف التصميم.
         etQuestTitle = findViewById(R.id.etQuestTitle);
         etQuestTime = findViewById(R.id.etQuestTime);
         etQuestSubject = findViewById(R.id.etQuestSubject);
@@ -39,6 +40,10 @@ public class AddQuest extends AppCompatActivity {
         etQuestScore = findViewById(R.id.etQuestScore);
 
         // 2. Set an OnClickListener for the Time field
+        // 2. إعداد مستمع للنقرات (OnClickListener) لحقل الوقت.
+        //  الـ OnClickListener هو عبارة عن "مراقب" (Listener) أو "منصت"
+        //وظيفته الوحيدة هي مراقبة العنصر (زر، نص، صورة) وانتظار لحظة
+        //لمس المستخدم للشاشة فوق هذا العنصر.
         etQuestTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

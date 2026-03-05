@@ -36,6 +36,8 @@ public class RewardsFragment extends Fragment {
      * @return A new instance of fragment RewardsFragment.
      */
     // TODO: Rename and change types and number of parameters
+    //هذا السطر موجود عادة عند إنشاء Fragment أو Activity جديد تلقائيًا من Android Studio.
+    //يذكّرك بأنك قد تحتاج لتغيير اسم المعاملات (parameters) أو نوعها أو عددها في دالة newInstance().
     public static RewardsFragment newInstance(String param1, String param2) {
         RewardsFragment fragment = new RewardsFragment();
         Bundle args = new Bundle();
@@ -55,6 +57,7 @@ public class RewardsFragment extends Fragment {
     }
 
     @Override
+    //الهدف منها هو ربط Fragment بملف الـ XML الخاص به، أي تحديد ما سيُعرض على الشاشة.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment

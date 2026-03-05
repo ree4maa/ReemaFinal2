@@ -86,10 +86,15 @@ public class SignUp extends AppCompatActivity {
          //   v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
           //  return insets;
       //  });
+        // التعامل مع حواف النافذة لعرض المحتوى من الحافة إلى الحافة (Edge-to-Edge).
+// إعداد "مستمع" لتطبيق هوامش النظام على الواجهة (مثل شريط الحالة وشريط التنقل السفلي).
+// الحصول على مقاسات أشرطة النظام (الساعة، البطارية، أزرار التنقل).
+// إضافة مساحة (Padding) للواجهة مساوية لمقاسات أشرطة النظام لضمان عدم اختفاء الأزرار خلفها.
     }
 
     private boolean validateFields() {
         boolean isValid = true;
+        // قراءة النصوص من حقول الإدخال وتحويلها إلى String بعد إزالة الفراغات من البداية والنهاية
         String name = nameInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -98,7 +103,7 @@ public class SignUp extends AppCompatActivity {
             nameLayout.setError("Name is required");
             isValid = false;
         } else {
-            nameLayout.setError(null);
+            nameLayout.setError(null);// إزالة أي رسالة خطأ إذا كانت البيانات صحيحة
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -115,15 +120,22 @@ public class SignUp extends AppCompatActivity {
             passwordLayout.setError(null);
         }
         if (isValid)
+            // إذا كانت كل الحقول صالحة، نقوم بإنشاء مستخدم جديد
         {
+            // إنشاء كائن MyUser لقاعدة البيانات المحلية
             MyUser myUser = new MyUser();
             myUser.setFullName(name);
             myUser.setEmail(email);
             myUser.setPassword(password);
+
+            // إدخال المستخدم في قاعدة البيانات المحلية (Room)
             AppDatabase.getDp(this).myUserQuery().insert(myUser);
+
+            // رسالة تأكيد تسجيل المستخدم محليًا
             Toast.makeText(this,"user registered successfully",Toast.LENGTH_SHORT).show();
 
             if (isValid) {
+                // تسجيل المستخدم أيضًا في Firebase Authentication
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -136,6 +148,7 @@ public class SignUp extends AppCompatActivity {
                             finish();
                         }
                         else {
+                            // إنهاء شاشة التسجيل حتى لا يعود المستخدم لها عند الضغط على زر العودة
                             Toast.makeText(SignUp.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 
@@ -144,6 +157,7 @@ public class SignUp extends AppCompatActivity {
                 });
                 }
             }
+        // إعادة قيمة isValid لتحديد ما إذا كانت البيانات صحيحة أم لا
         return isValid;
         }
 
@@ -184,29 +198,37 @@ public class SignUp extends AppCompatActivity {
                         // عرض رسالة خطأ للمستخدم
                     }
                 });
+        // ربط عناصر واجهة المستخدم (EditText و Button) الموجودة في XML بالمتغيرات البرمجية
         EditText nameEditText = findViewById(R.id.TV_name);
         EditText emailEditText = findViewById(R.id.TV_email);
         EditText passwrdEditText = findViewById(R.id.TV_password);
         Button addButton = findViewById(R.id.btn_signup);
 
-
+        // إضافة مستمع للنقر على زر addButton
         addButton.setOnClickListener(v -> {
             String name = nameEditText.getText().toString();
             String email = emailEditText.getText().toString();
 
 
             if (!name.isEmpty() && !email.isEmpty()) {
+                // إنشاء كائن جديد من نوع MyUser لتمثيل المستخدم الجديد
                 MyUser newUser = new MyUser();
+
+                // حفظ المستخدم في قاعدة البيانات أو المعالجة المناسبة
                 saveUser(newUser);
 
 
-                // مسح حقول الإدخال
+                // مسح حقول الإدخال بعد حفظ البيانات
                 nameEditText.setText("");
                 emailEditText.setText("");
+                //يفرغ الحقول تلقائيًا بعد حفظ البيانات.
+                //يجعل المستخدم جاهزًا لإدخال بيانات مستخدم جديد دون الحاجة لحذف النصوص يدوياً.
             } else {
                 Log.w(TAG, "الرجاء إدخال الاسم والبريد الإلكتروني.");
             }
         });
+        //لو لم نمسح الحقول، وإذا ضغط المستخدم زر التسجيل مرة ثانية بالخطأ → البرنامج سيحفظ نفس البيانات مرتين!
+        //مسح الحقول يعطي المستخدم إشارة بصرية أن البيانات تم تسجيلها، والحقل أصبح جاهز لإدخال مستخدم جديد.
 
 
     }

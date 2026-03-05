@@ -56,14 +56,20 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
 
 
-
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
+            //// هذا المستمع (Listener) يتفاعل مع اختيارات المستخدم من شريط التنقل السفلي (BottomNavigationView)
             public boolean onNavigationItemSelected(@NonNull android.view.MenuItem item) {
+                //    // تعريف متغير لتخزين الـ Fragment الذي سيتم عرضه عند اختيار عنصر من القائمة
                 Fragment selectedFragment = null;
+
+                // الحصول على معرف العنصر الذي تم اختياره في القائمة
                 int id = item.getItemId();
 
+                // التحقق من أي عنصر تم الضغط عليه واختيار الـ Fragment المناسب
                 if (id == R.id.nav_quests) {
+
+                    // إذا ضغط المستخدم على "Quests" → عرض QuestsFragment
                     selectedFragment = new QuestsFragment();
                 } else if (id == R.id.nav_level) {
                     selectedFragment = new LevelFragment();
@@ -72,11 +78,11 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_competition) {
                     selectedFragment = new CompetitionFragment();
                 }
-
+                // إذا تم تحديد Fragment صحيح، نقوم بعرضه داخل FrameLayout
                 if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction()
+                    getSupportFragmentManager().beginTransaction() // استبدال المحتوى الحالي بالـ Fragment الجديد
                             .replace(R.id.fragment_container, selectedFragment)
-                            .commit();
+                            .commit();// تنفيذ التغيير
                     return true;
                 }
                 return false;
@@ -88,9 +94,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // onResume() تُستدعى عندما يعود المستخدم إلى هذه الشاشة
+        // سواء بعد فتح شاشة أخرى أو عند فتح التطبيق من جديد
+        // الحصول على جميع المهام (Quests) من قاعدة البيانات المحلية (Room)
         List<MyQuest> allQuests = AppDatabase.getDp(this).myTaskQuery().getAllTasks();
+
+        // تحديث محتوى الـ Adapter المسؤول عن عرض قائمة المهام (ListView أو RecyclerView)
+        // مسح أي بيانات موجودة حاليًا في الـ Adapter
         QuestAdapter.clear();
+
+        // إضافة جميع المهام المسترجعة من قاعدة البيانات
         QuestAdapter.addAll(allQuests);
+
+        // إخطار الـ Adapter بأن البيانات تغيرت حتى يقوم بتحديث واجهة المستخدم
         QuestAdapter.notifyDataSetChanged();
     }
 }
