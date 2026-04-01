@@ -60,6 +60,12 @@ dependencies {
     // optional - Paging 3 Integration
     implementation "androidx.room:room-paging:$room_version"
     implementation 'com.squareup.picasso:picasso:2.71828'
+    dependencies {
+        // ... other dependencies
+        implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+        // Necessary for Java compatibility (Futures)
+        implementation("com.google.guava:guava:31.1-android")
+    }
 
 
 }

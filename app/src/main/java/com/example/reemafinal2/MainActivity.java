@@ -18,6 +18,7 @@ import com.example.reemafinal2.data.MyTasksTable.MyQuestAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -42,12 +43,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         questsRef = FirebaseDatabase.getInstance().getReference("quests");
         btnAddQuest = findViewById(R.id.btnAddQuest);
-// إظهار الزر فقط إذا كان المستخدم Admin
-        if (isAdmin) {
+        // إظهار الزر فقط إذا كان المستخدم Admin
+
+        if(FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("reema567@gmail.com"))
             btnAddQuest.setVisibility(View.VISIBLE);
-        } else {
-            btnAddQuest.setVisibility(View.GONE);
-        }
+
+        else
+             btnAddQuest.setVisibility(View.GONE);
+
+
 
 // عند الضغط على الزر → فتح AddQuest
         btnAddQuest.setOnClickListener(v -> {

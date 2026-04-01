@@ -11,7 +11,7 @@ import com.example.reemafinal2.data.MyTasksTable.MyQuestQuery;
 import com.example.reemafinal2.data.MyUser.MyPlayer;
 import com.example.reemafinal2.data.MyUser.MyPlayerQuery;
 
-@Database(entities = {MyPlayer.class, MyQuest.class,}, version = 2)
+@Database(entities = {MyPlayer.class, MyQuest.class,}, version = 3)
     public abstract class AppDatabase extends RoomDatabase {
         private static AppDatabase dp;
         public abstract MyPlayerQuery myUserQuery();

@@ -46,4 +46,11 @@
     <string name="_250">250</string>
     <string name="_01_35">01:35</string>
     <string name="game_id_1024">GAME ID: 1024</string>
+    <string name="random_opponent">Random Opponent</string>
+    <string name="find_a_match_worldwide">Find a match worldwide</string>
+    <string name="ai_assistant_convo">AI Assistant / Convo</string>
+    <string name="practice_or_chat_with_our_ai">Practice or chat with our AI</string>
+    <string name="invite_your_friends_to_a_match">Invite your friends to a match</string>
+    <string name="challenge_friends">Challenge Friends</string>
+    <string name="competition_arena">Competition Arena</string>
 </resources>
