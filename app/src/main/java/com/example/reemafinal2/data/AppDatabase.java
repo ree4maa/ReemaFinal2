@@ -8,12 +8,13 @@ import androidx.room.RoomDatabase;
 
 import com.example.reemafinal2.data.MyTasksTable.MyQuest;
 import com.example.reemafinal2.data.MyTasksTable.MyQuestQuery;
-import com.example.reemafinal2.data.MyUser.MyUser;
-import com.example.reemafinal2.data.MyUser.MyUserQuery;
-    @Database(entities = {MyUser.class, MyQuest.class,}, version = 2)
+import com.example.reemafinal2.data.MyUser.MyPlayer;
+import com.example.reemafinal2.data.MyUser.MyPlayerQuery;
+
+@Database(entities = {MyPlayer.class, MyQuest.class,}, version = 2)
     public abstract class AppDatabase extends RoomDatabase {
         private static AppDatabase dp;
-        public abstract MyUserQuery myUserQuery();
+        public abstract MyPlayerQuery myUserQuery();
         public abstract MyQuestQuery myTaskQuery();
         public static AppDatabase getDp(Context context) {
             if (dp == null) {

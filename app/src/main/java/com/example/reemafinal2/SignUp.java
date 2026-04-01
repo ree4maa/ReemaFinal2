@@ -15,17 +15,11 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.reemafinal2.data.AppDatabase;
-import com.example.reemafinal2.data.MyUser.MyUser;
+import com.example.reemafinal2.data.MyUser.MyPlayer;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -123,16 +117,17 @@ public class SignUp extends AppCompatActivity {
             // إذا كانت كل الحقول صالحة، نقوم بإنشاء مستخدم جديد
         {
             // إنشاء كائن MyUser لقاعدة البيانات المحلية
-            MyUser myUser = new MyUser();
-            myUser.setFullName(name);
-            myUser.setEmail(email);
-            myUser.setPassword(password);
-
+            MyPlayer myPlayer = new MyPlayer();
+            myPlayer.setFullName(name);
+            myPlayer.setEmail(email);
+            myPlayer.setPassword(password);
+            if(AppDatabase.getDp(getApplicationContext()).myUserQuery().checkEmail(email)==null)
             // إدخال المستخدم في قاعدة البيانات المحلية (Room)
-            AppDatabase.getDp(this).myUserQuery().insert(myUser);
+            AppDatabase.getDp(this).myUserQuery().insert(myPlayer);
 
-            // رسالة تأكيد تسجيل المستخدم محليًا
-            Toast.makeText(this,"user registered successfully",Toast.LENGTH_SHORT).show();
+            else
+                isValid=false;
+
 
             if (isValid) {
                 // تسجيل المستخدم أيضًا في Firebase Authentication
@@ -143,9 +138,7 @@ public class SignUp extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(SignUp.this, "Authentication successful.",
                                     Toast.LENGTH_SHORT).show();
-                            Intent i=new Intent(SignUp.this,MainActivity.class);
-                            startActivity(i);
-                            finish();
+                           saveUser(myPlayer);
                         }
                         else {
                             // إنهاء شاشة التسجيل حتى لا يعود المستخدم لها عند الضغط على زر العودة
@@ -161,7 +154,7 @@ public class SignUp extends AppCompatActivity {
         return isValid;
         }
 
-    public void saveUser(MyUser myUser) {// الحصول على مرجع إلى عقدة "users" في قاعدة البيانات
+    public void saveUser(MyPlayer myPlayer) {// الحصول على مرجع إلى عقدة "users" في قاعدة البيانات
 
         // تهيئة Firebase Realtime Database    //مؤشر لقاعدة البيانات
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -170,34 +163,43 @@ public class SignUp extends AppCompatActivity {
         // إنشاء مفتاح فريد للمستخدم الجديد
         DatabaseReference newUserRef = usersRef.push();
         // تعيين معرف المستخدم في كائن MyUser
-        myUser.setKeyid(Long.parseLong(newUserRef.getKey()));
+        myPlayer.setKeyid(Long.parseLong(newUserRef.getKey()));
         // حفظ بيانات المستخدم في قاعدة البيانات
         //اضافة كائن "لمجموعة" المستعملين ومعالج حدث لفحص نجاح المطلوب
        // معالج حدث لفحص هل تم المطلوب من قاعدة البيانات //
-        newUserRef.setValue(myUser)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(SignUp.this, "Succeeded to add User",  Toast.LENGTH_SHORT).show();
-                        finish();
+        newUserRef.setValue(myPlayer).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful())
+                {
+                    Intent i=new Intent(SignUp.this,MainActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                else {
 
-
-
-
-                        // تم حفظ البيانات بنجاح
-                        Log.d(TAG, "تم حفظ المستخدم بنجاح: " + myUser.getKeyid());
-                        // تحديث واجهة المستخدم أو تنفيذ إجراءات أخرى
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // معالجة الأخطاء
-                        Log.e(TAG, "خطأ في حفظ المستخدم: " + e.getMessage(), e);
-                        Toast.makeText(SignUp.this, "Failed to add User", Toast.LENGTH_SHORT).show();
-                        // عرض رسالة خطأ للمستخدم
-                    }
-                });
+                }
+            }
+        });
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Toast.makeText(SignUp.this, "Succeeded to add User",  Toast.LENGTH_SHORT).show();
+//                        finish();
+//                        // تم حفظ البيانات بنجاح
+//                        Log.d(TAG, "تم حفظ المستخدم بنجاح: " + myUser.getKeyid());
+//                        // تحديث واجهة المستخدم أو تنفيذ إجراءات أخرى
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        // معالجة الأخطاء
+//                        Log.e(TAG, "خطأ في حفظ المستخدم: " + e.getMessage(), e);
+//                        Toast.makeText(SignUp.this, "Failed to add User", Toast.LENGTH_SHORT).show();
+//                        // عرض رسالة خطأ للمستخدم
+//                    }
+//                });
         // ربط عناصر واجهة المستخدم (EditText و Button) الموجودة في XML بالمتغيرات البرمجية
         EditText nameEditText = findViewById(R.id.TV_name);
         EditText emailEditText = findViewById(R.id.TV_email);
@@ -212,7 +214,7 @@ public class SignUp extends AppCompatActivity {
 
             if (!name.isEmpty() && !email.isEmpty()) {
                 // إنشاء كائن جديد من نوع MyUser لتمثيل المستخدم الجديد
-                MyUser newUser = new MyUser();
+                MyPlayer newUser = new MyPlayer();
 
                 // حفظ المستخدم في قاعدة البيانات أو المعالجة المناسبة
                 saveUser(newUser);

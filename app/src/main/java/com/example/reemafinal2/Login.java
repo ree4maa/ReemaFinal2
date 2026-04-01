@@ -16,9 +16,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.reemafinal2.data.AppDatabase;
-import com.example.reemafinal2.data.MyUser.MyUser;
+import com.example.reemafinal2.data.MyUser.MyPlayer;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
     // تم تغيير اسماء المتغيرات لتكون أوضح
@@ -29,6 +30,7 @@ public class Login extends AppCompatActivity {
     private Button loginButton;
     private TextView signUpText;
     private Button signUpButton;
+    private FirebaseAuth mAuth;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -36,6 +38,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();
 
         // --- ربط المتغيرات بواجهة المستخدم ---
         // تأكد من أن هذه هي الـ IDs الصحيحة في ملف activity_login.xml
@@ -52,10 +55,15 @@ public class Login extends AppCompatActivity {
             public void onClick(View v) {
                 // استدعاء دالة التحقق قبل محاولة تسجيل الدخول
                 if (validateFields()) {
+                    String email = emailEditText.getText().toString().trim();
+                    String password = passwordEditText.getText().toString().trim();
+                    loginWithFirebase(email, password);
                     // إذا كانت الحقول صحيحة، نفذ عملية تسجيل الدخول
                     // يمكنك لاحقاً إضافة كود التحقق من الايميل وكلمة المرور هنا
                     Intent intent = new Intent(Login.this, MainActivity.class);
                     startActivity(intent);
+                    //الكود يقوم بتسجيل دخول المستخدم عبر Firebase،
+                    // وإذا نجح ينقله للصفحة الرئيسية، وإذا فشل يعرض رسالة خطأ.
                 }
             }
         });
@@ -74,7 +82,23 @@ public class Login extends AppCompatActivity {
             return insets;
         });
     }
-
+    private void loginWithFirebase(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Login success
+                        Toast.makeText(Login.this, "Login successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        startActivity(intent);
+                        finish(); // Close login activity so user can't go back
+                    } else {
+                        // Login failed
+                        String error = task.getException() != null ? task.getException().getMessage() : "Authentication failed";
+                        Toast.makeText(Login.this, "Error: " + error, Toast.LENGTH_LONG).show();
+                        passwordLayout.setError("Incorrect email or password");
+                    }
+                });
+    }
     /**
      * دالة للتحقق من صحة حقول الإدخال (الايميل وكلمة المرور).
      * @return true إذا كانت جميع الحقول صالحة, و false إذا كان هناك خطأ.
@@ -111,8 +135,9 @@ public class Login extends AppCompatActivity {
             passwordLayout.setError(null);
         }
 
-        MyUser myUser = AppDatabase.getDp(this).myUserQuery().checkEmailPassword(email,password);
-        if (myUser!= null){
+//todo add firebase auth for sign in
+        MyPlayer myPlayer = AppDatabase.getDp(this).myUserQuery().checkEmailPassword(email,password);
+        if (myPlayer != null){
             Toast.makeText(this,"login successful",Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);

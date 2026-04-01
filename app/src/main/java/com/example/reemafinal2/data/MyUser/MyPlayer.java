@@ -10,8 +10,9 @@ import androidx.room.PrimaryKey;
     /**
      * فئة تمثل المستعمل
      */
+    //todo change my user name
     @Entity
-    public class MyUser
+    public class MyPlayer
     {
         @PrimaryKey(autoGenerate = true)//تحديد الصفة كمفتاح رئيسي والذي يُنتجح بشكل تلقائي
         public long keyid;

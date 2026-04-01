@@ -2,7 +2,6 @@ package com.example.reemafinal2;
 
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,8 +9,9 @@ import android.widget.Toast;
 
 import com.example.reemafinal2.data.AppDatabase;
 import com.example.reemafinal2.data.MyTasksTable.MyQuest;
-import com.example.reemafinal2.data.MyTasksTable.MyQuestQuery;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DatabaseReference;
+
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
 import java.util.Locale;
@@ -19,8 +19,9 @@ import java.util.Locale;
 public class AddQuest extends AppCompatActivity {
 
     // Declare the UI elements
-    TextInputEditText etQuestTitle, etQuestTime, etQuestSubject, etGameId, etQuestNote,etQuestScore;
+    TextInputEditText etQuestTitle, etQuestTime, etQuestSubject, etGameId, etQuestNote, etQuestScore;
     Button btnAddQuest;
+    private DatabaseReference database;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -112,14 +113,32 @@ public class AddQuest extends AppCompatActivity {
         quest.setNote(note);
         quest.setRewardpoints(score); // ← هنا تضيفين السكور
 
+
+        //todo save in reltime databas ellike save user
         // حفظ المهمة في قاعدة البيانات
-        AppDatabase.getDp(this).myTaskQuery().insertMyQuest(quest);
 
-        Toast.makeText(this, "Quest saved successfully!", Toast.LENGTH_LONG).show();
+        long questKey = Long.parseLong(database.push().getKey());
+        quest.setKeyid(questKey); // Assign the key to the object
 
-        finish(); // الرجوع للـ MainActivity
+        // 2. Save to Firebase
+        database.child(String.valueOf(questKey)).setValue(quest)
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully saved in Firebase, now save locally in Room
+                    new Thread(() -> {
+                        AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
+
+                        runOnUiThread(() -> {
+                            Toast.makeText(AddQuest.this, "Quest saved successfully!", Toast.LENGTH_LONG).show();
+                            finish(); // Go back to MainActivity
+                        });
+                    }).start();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AddQuest.this, "Failed to save quest: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }); //الكود يرفع البيانات إلى Firebase،
+        // وإذا نجحت العملية يخزن نسخة منها في قاعدة البيانات المحلية (Room).
     }
-    }
+}
 
 //- قراءة النصوص من الحقول: العنوان، الوقت، الموضوع، رقم اللعبة، الملاحظات.
 //- التحقق من أن الحقول الأساسية (العنوان والوقت) ليست فارغة.

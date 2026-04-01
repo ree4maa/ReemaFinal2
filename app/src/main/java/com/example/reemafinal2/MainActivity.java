@@ -18,6 +18,10 @@ import com.example.reemafinal2.data.MyTasksTable.MyQuestAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +33,15 @@ public class MainActivity extends AppCompatActivity {
     private MyQuestAdapter QuestAdapter;
     private Button btnAddQuest;
     private boolean isAdmin = true; // عدلي حسب التحقق الحقيقي من المستخدم
+    private DatabaseReference questsRef;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        questsRef = FirebaseDatabase.getInstance().getReference("quests");
         btnAddQuest = findViewById(R.id.btnAddQuest);
-
 // إظهار الزر فقط إذا كان المستخدم Admin
         if (isAdmin) {
             btnAddQuest.setVisibility(View.VISIBLE);
@@ -54,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
         lstQuests.setAdapter(QuestAdapter);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
-
-
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             //// هذا المستمع (Listener) يتفاعل مع اختيارات المستخدم من شريط التنقل السفلي (BottomNavigationView)
@@ -94,19 +97,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // onResume() تُستدعى عندما يعود المستخدم إلى هذه الشاشة
-        // سواء بعد فتح شاشة أخرى أو عند فتح التطبيق من جديد
-        // الحصول على جميع المهام (Quests) من قاعدة البيانات المحلية (Room)
-        List<MyQuest> allQuests = AppDatabase.getDp(this).myTaskQuery().getAllTasks();
+        readQuestsFromFirebase();
+    }
+//الكود يقوم بتحميل جميع الـ Quests من Firebase
+// في كل مرة تتغير فيها البيانات، ثم يعرضها في القائمة عبر الـ Adapter.
+    private void readQuestsFromFirebase() {
+        questsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<MyQuest> firebaseQuests = new ArrayList<>();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    MyQuest quest = dataSnapshot.getValue(MyQuest.class);
+                    if (quest != null) firebaseQuests.add(quest);
+                }
 
-        // تحديث محتوى الـ Adapter المسؤول عن عرض قائمة المهام (ListView أو RecyclerView)
-        // مسح أي بيانات موجودة حاليًا في الـ Adapter
-        QuestAdapter.clear();
+                // Clear and add only the Firebase data
+                QuestAdapter.clear();
+                QuestAdapter.addAll(firebaseQuests);
+                QuestAdapter.notifyDataSetChanged();
+            }
 
-        // إضافة جميع المهام المسترجعة من قاعدة البيانات
-        QuestAdapter.addAll(allQuests);
-
-        // إخطار الـ Adapter بأن البيانات تغيرت حتى يقوم بتحديث واجهة المستخدم
-        QuestAdapter.notifyDataSetChanged();
+            @Override
+            public void onCancelled(@NonNull com.google.firebase.database.DatabaseError error) {
+                // Handle error here
+            }
+        });
     }
 }
