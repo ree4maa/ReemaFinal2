@@ -33,10 +33,6 @@
         <activity
             android:name=".SignUp"
             android:exported="true" />
-        <activity
-            android:name=".AIChatActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
 
     </application>
 

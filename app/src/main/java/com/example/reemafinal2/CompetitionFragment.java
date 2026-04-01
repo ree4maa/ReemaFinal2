@@ -43,18 +43,9 @@ public class CompetitionFragment extends Fragment {
         // Random Match
         cardRandom.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Searching for Opponent...", Toast.LENGTH_SHORT).show();
-            // Logic for Firebase Matchmaking goes here
-        });
+            /// Logic for Firebase Matchmaking goes here
 
-         //Chat with AI
-         cardAI.setOnClickListener(v -> {
-          Toast.makeText(getActivity(), "Starting AI Conversation...", Toast.LENGTH_SHORT).show();
-         //You can create a new Activity for the AI Chat
-         Intent i = new Intent(getActivity(), AIChatActivity.class);
-         startActivity(i);
         });
-
         return view;
-
     }
 }
