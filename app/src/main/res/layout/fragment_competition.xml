@@ -11,16 +11,18 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <!-- Option 1: Play with Friends -->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginBottom="24dp"
             android:text="Competition Arena"
             android:textColor="@color/black"
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <!-- Option 1: Play with Friends -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardFriends"
             android:layout_width="match_parent"
