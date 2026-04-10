@@ -4,60 +4,129 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LevelFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.reemafinal2.data.AppDatabase;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.concurrent.Executors;
+
 public class LevelFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private ShapeableImageView imgProfile;
+    private TextView tvPlayerName, tvCurrentLevel, tvXpPercentage;
+    private ProgressBar xpProgressBar;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // Firebase
+    private DatabaseReference userRef;
+    private FirebaseAuth mAuth;
 
-    public LevelFragment() {
-        // Required empty public constructor
-    }
+    // Local Database (Room)
+    private AppDatabase localDb;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LevelFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LevelFragment newInstance(String param1, String param2) {
-        LevelFragment fragment = new LevelFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_level, container, false);
+
+        // 1. Initialize UI Views
+        imgProfile = view.findViewById(R.id.imgProfile);
+        tvPlayerName = view.findViewById(R.id.tvPlayerName);
+        tvCurrentLevel = view.findViewById(R.id.tvCurrentLevel);
+        tvXpPercentage = view.findViewById(R.id.tvXpPercentage);
+        xpProgressBar = view.findViewById(R.id.xpProgressBar);
+
+        // 2. Initialize Databases
+        mAuth = FirebaseAuth.getInstance();
+        localDb = AppDatabase.getDp(getContext()); // Ensure your AppDatabase has this method
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+
+            // Load from Firebase and Sync to Local
+            loadAndSyncData();
+        } else {
+            loadLocalDataOnly(); // If not logged in, show local guest data
+        }
+
+        return view;
+    }
+
+    private void loadAndSyncData() {
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    Long level = snapshot.child("level").getValue(Long.class);
+                    Long xp = snapshot.child("xp").getValue(Long.class);
+                    String profilePicUrl = snapshot.child("profilePic").getValue(String.class);
+
+                    // Update UI immediately from Firebase
+                    updateUI(name, level, xp, profilePicUrl);
+
+                    // Sync to Local Room Database in background
+                    syncToLocal(name, level, xp);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                loadLocalDataOnly(); // If Firebase fails, use local data
+            }
+        });
+    }
+
+    private void updateUI(String name, Long level, Long xp, String profilePicUrl) {
+        tvPlayerName.setText(name != null ? name : "Player");
+        tvCurrentLevel.setText(String.valueOf(level != null ? level : 1));
+
+        int currentXp = (xp != null) ? xp.intValue() : 0;
+        xpProgressBar.setMax(100); // Or your max level XP
+        xpProgressBar.setProgress(currentXp);
+        tvXpPercentage.setText(currentXp + " / 100");
+
+        if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+            Picasso.get().load(profilePicUrl).placeholder(android.R.drawable.ic_menu_gallery).into(imgProfile);
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_level, container, false);
+    private void syncToLocal(String name, Long level, Long xp) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // Create a User object compatible with your Room Entity
+            // Example: MyUser user = new MyUser(name, level.intValue(), xp.intValue());
+            // localDb.userDao().insert(user);
+        });
+    }
+
+    private void loadLocalDataOnly() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // Fetch from Room
+            // MyUser localUser = localDb.userDao().getUser();
+            // getActivity().runOnUiThread(() -> updateUI(localUser.name, ...));
+        });
+    }
+
+    private void updateXPUI(int currentXp, int maxXp) {
+        xpProgressBar.setMax(maxXp);
+        xpProgressBar.setProgress(currentXp);
+        tvXpPercentage.setText(currentXp + " / " + maxXp);
     }
 }

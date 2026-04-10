@@ -53,4 +53,14 @@
     <string name="invite_your_friends_to_a_match">Invite your friends to a match</string>
     <string name="challenge_friends">Challenge Friends</string>
     <string name="competition_arena">Competition Arena</string>
+    <string name="_5">5</string>
+    <string name="player_name">Player Name</string>
+    <string name="xp_points">XP POINTS</string>
+    <string name="_450_1000">450 / 1000</string>
+    <string name="my_achievements">My Achievements</string>
+    <string name="novice">Novice</string>
+    <string name="adventurer">Adventurer</string>
+    <string name="pro">Pro</string>
+    <string name="master">Master</string>
+    <string name="legend">Legend</string>
 </resources>
