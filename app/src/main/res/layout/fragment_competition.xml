@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFD3F8">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,11 +14,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:text="Competition Arena"
-            android:textSize="28sp"
-            android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginBottom="24dp"/>
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
         <!-- Option 1: Play with Friends -->
         <com.google.android.material.card.MaterialCardView
@@ -32,9 +32,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="50dp"
@@ -44,8 +44,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -54,10 +54,12 @@
                         android:textColor="#040202"
                         android:textSize="18sp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Invite your friends to a match"/>
+                        android:text="Invite your friends to a match"
+                        android:textColor="#D90CB4" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -74,9 +76,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="50dp"
@@ -86,8 +88,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -96,10 +98,12 @@
                         android:textColor="#020202"
                         android:textSize="18sp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Find a match worldwide"/>
+                        android:text="Find a match worldwide"
+                        android:textColor="#D90CB4" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -117,9 +121,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical">
+                android:padding="20dp">
 
                 <ImageView
                     android:layout_width="50dp"
@@ -129,19 +133,21 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="AI Assistant / Convo"
                         android:textColor="@color/design_default_color_primary"
                         android:textSize="18sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Practice or chat with our AI"/>
+                        android:text="Practice or chat with our AI" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
