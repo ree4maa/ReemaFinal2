@@ -63,4 +63,20 @@
     <string name="pro">Pro</string>
     <string name="master">Master</string>
     <string name="legend">Legend</string>
+    <string name="_1">1</string>
+    <string name="player_name_">Player Name</string>
+    <string name="_0_pts">0 pts</string>
+    <string name="rewards_">REWARDS</string>
+    <string name="total_rewards">Total Rewards</string>
+    <string name="_1_250">1,250</string>
+    <string name="earned">Earned</string>
+    <string name="_1_000_pts">1,000 pts</string>
+    <string name="from_friends">From Friends</string>
+    <string name="_250_pts">250 pts</string>
+    <string name="community_milestone">COMMUNITY MILESTONE</string>
+    <string name="goal_50_000_pts">Goal: 50,000 pts</string>
+    <string name="when_reached_everyone_gets_a_special_badge">When reached, everyone gets a special badge!</string>
+    <string name="global_leaderboard">Global Leaderboard</string>
+    <string name="rank_12">RANK #12</string>
+    <string name="you">You</string>
 </resources>

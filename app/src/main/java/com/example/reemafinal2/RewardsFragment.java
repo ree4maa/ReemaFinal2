@@ -4,63 +4,144 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RewardsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.reemafinal2.data.AppDatabase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Executors; // For Local Database threading
+
 public class RewardsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private TextView tvTotalRewards, tvEarnedPoints, tvFriendGifts, tvMyRank, tvGlobalGoalStatus;
+    private LinearLayout leaderboardContainer;
+    private ProgressBar globalProgressBar;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // Cloud Database (Firebase)
+    private DatabaseReference dbRef;
+    private DatabaseReference globalRef;
+    private String currentUserId;
 
-    public RewardsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RewardsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    //هذا السطر موجود عادة عند إنشاء Fragment أو Activity جديد تلقائيًا من Android Studio.
-    //يذكّرك بأنك قد تحتاج لتغيير اسم المعاملات (parameters) أو نوعها أو عددها في دالة newInstance().
-    public static RewardsFragment newInstance(String param1, String param2) {
-        RewardsFragment fragment = new RewardsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    // Local Database (Room)
+    private AppDatabase localDb;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_rewards, container, false);
+
+        // 1. Initialize UI
+        tvTotalRewards = view.findViewById(R.id.tvTotalRewards);
+        tvEarnedPoints = view.findViewById(R.id.tvEarnedPoints);
+        tvFriendGifts = view.findViewById(R.id.tvFriendGifts);
+        tvMyRank = view.findViewById(R.id.tvMyRank);
+        tvGlobalGoalStatus = view.findViewById(R.id.tvGlobalGoalStatus);
+        globalProgressBar = view.findViewById(R.id.globalProgressBar);
+        leaderboardContainer = view.findViewById(R.id.leaderboardContainer);
+
+        // 2. Initialize Firebase (Cloud Database)
+        currentUserId = FirebaseAuth.getInstance().getUid();
+        dbRef = FirebaseDatabase.getInstance().getReference("users");
+        globalRef = FirebaseDatabase.getInstance().getReference("global_stats");
+
+        // 3. Initialize Room (Local Database)
+        localDb = AppDatabase.getDp(getContext());
+
+        // 4. Load Data
+        loadGlobalLeaderboard();
+        loadGlobalCommunityGoal();
+
+        return view;
     }
 
-    @Override
-    //الهدف منها هو ربط Fragment بملف الـ XML الخاص به، أي تحديد ما سيُعرض على الشاشة.
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rewards, container, false);
+    private void loadGlobalCommunityGoal() {
+        globalRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    Long communityTotal = snapshot.child("communityTotal").getValue(Long.class);
+                    Long goal = snapshot.child("currentGoal").getValue(Long.class);
+
+                    if (communityTotal == null) communityTotal = 0L;
+                    if (goal == null || goal == 0) goal = 50000L;
+
+                    tvGlobalGoalStatus.setText("Goal: " + String.format("%,d", communityTotal) + " / " + String.format("%,d", goal));
+                    int progress = (int) ((communityTotal * 100) / goal);
+                    globalProgressBar.setProgress(progress);
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    private void loadGlobalLeaderboard() {
+        dbRef.orderByChild("totalRewards").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<DataSnapshot> players = new ArrayList<>();
+                for (DataSnapshot userSnap : snapshot.getChildren()) {
+                    players.add(userSnap);
+                }
+                Collections.reverse(players);
+
+                leaderboardContainer.removeAllViews();
+                int rank = 1;
+
+                for (DataSnapshot player : players) {
+                    String name = player.child("name").getValue(String.class);
+                    Long total = player.child("totalRewards").getValue(Long.class);
+                    Long earned = player.child("playRewards").getValue(Long.class);
+                    Long friends = player.child("friendRewards").getValue(Long.class);
+
+                    if (total == null) total = 0L;
+                    if (earned == null) earned = 0L;
+                    if (friends == null) friends = 0L;
+
+                    if (player.getKey() != null && player.getKey().equals(currentUserId)) {
+                        // Update UI
+                        tvTotalRewards.setText(String.format("%,d", total));
+                        tvEarnedPoints.setText(earned + " pts");
+                        tvFriendGifts.setText(friends + " pts");
+                        tvMyRank.setText("RANK #" + rank);
+
+                        // SYNC TO LOCAL DATABASE (Room)
+                        saveToLocalDatabase(total, earned, friends);
+                    }
+
+                    if (rank <= 5) {
+                        addLeaderboardRow(rank, name, total);
+                    }
+                    rank++;
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
+    }
+
+    // --- Local Database Logic ---
+    private void saveToLocalDatabase(Long total, Long earned, Long friends) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            // This part depends on your specific Room Entity (User or Reward)
+            // Example: localDb.userDao().updateRewards(currentUserId, total, earned, friends);
+        });
+    }
+
+    private void addLeaderboardRow(int rank, String name, long score) {
+        View row = getLayoutInflater().inflate(R.layout.item_leaderboard, null);
+        ((TextView)row.findViewById(R.id.tvRankNum)).setText(String.valueOf(rank));
+        ((TextView)row.findViewById(R.id.tvPlayerName)).setText(name);
+        ((TextView)row.findViewById(R.id.tvPlayerScore)).setText(score + " pts");
+        leaderboardContainer.addView(row);
     }
 }

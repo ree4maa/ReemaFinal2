@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- Rank Number -->
+        <TextView
+            android:id="@+id/tvRankNum"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:text="@string/_1"
+            android:textColor="#6C5CE7"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Player Name -->
+        <TextView
+            android:id="@+id/tvPlayerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/player_name_"
+            android:textColor="#2D3436"
+            android:textSize="16sp" />
+
+        <!-- Score -->
+        <TextView
+            android:id="@+id/tvPlayerScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/_0_pts"
+            android:textColor="#00B894"
+            android:textStyle="bold" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
