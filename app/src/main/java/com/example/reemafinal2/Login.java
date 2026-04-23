@@ -49,6 +49,12 @@ public class Login extends AppCompatActivity {
         loginButton = findViewById(R.id.btn_log);
         signUpButton = findViewById(R.id.btn_sign);
 
+        if(mAuth.getCurrentUser() != null){
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         // --- التعامل مع ضغطات الأزرار ---
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +64,7 @@ public class Login extends AppCompatActivity {
                     String email = emailEditText.getText().toString().trim();
                     String password = passwordEditText.getText().toString().trim();
                     loginWithFirebase(email, password);
-                    // إذا كانت الحقول صحيحة، نفذ عملية تسجيل الدخول
-                    // يمكنك لاحقاً إضافة كود التحقق من الايميل وكلمة المرور هنا
-                    Intent intent = new Intent(Login.this, MainActivity.class);
-                    startActivity(intent);
+
                     //الكود يقوم بتسجيل دخول المستخدم عبر Firebase،
                     // وإذا نجح ينقله للصفحة الرئيسية، وإذا فشل يعرض رسالة خطأ.
                 }
@@ -139,8 +142,8 @@ public class Login extends AppCompatActivity {
         MyPlayer myPlayer = AppDatabase.getDp(this).myUserQuery().checkEmailPassword(email,password);
         if (myPlayer != null){
             Toast.makeText(this,"login successful",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(Login.this, MainActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(Login.this, MainActivity.class);
+//            startActivity(intent);
             return true;
         }
 

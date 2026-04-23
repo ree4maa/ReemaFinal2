@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
         btnAddQuest = findViewById(R.id.btnAddQuest);
         // إظهار الزر فقط إذا كان المستخدم Admin
 
-        if(FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("reema567@gmail.com"))
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null &&
+                FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("reema567@gmail.com"))
             btnAddQuest.setVisibility(View.VISIBLE);
 
         else
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new RewardsFragment();
                 } else if (id == R.id.nav_competition) {
                     selectedFragment = new CompetitionFragment();
+                }else if (id == R.id.nav_settings) {
+                    selectedFragment = new Settings_Fragment();
                 }
                 // إذا تم تحديد Fragment صحيح، نقوم بعرضه داخل FrameLayout
                 if (selectedFragment != null) {
