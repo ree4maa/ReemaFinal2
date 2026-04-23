@@ -67,9 +67,13 @@ public class Settings_Fragment extends Fragment {
             Toast.makeText(getContext(), "Help Center: Contact support@reema.com", Toast.LENGTH_LONG).show();
         });
 
-        // --- REPORT A PROBLEM (Firebase Database) ---
+        // --- REPORT A PROBLEM ---
         btnReportProblem.setOnClickListener(v -> {
-            reportProblemToFirebase("User reported a bug from settings.");
+            // This now navigates to the new ReportProblemFragment
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new ReportProblemFragment())
+                    .addToBackStack(null) // Allows user to press back to return to settings
+                    .commit();
         });
 
         // --- LOGOUT (Firebase + Room) ---
@@ -78,37 +82,24 @@ public class Settings_Fragment extends Fragment {
         });
     }
 
-    private void reportProblemToFirebase(String message) {
-        String userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "anonymous";
-        String reportId = mDatabase.child("reports").push().getKey();
-
-        Map<String, Object> report = new HashMap<>();
-        report.put("userId", userId);
-        report.put("message", message);
-        report.put("timestamp", System.currentTimeMillis());
-
-        if (reportId != null) {
-            mDatabase.child("reports").child(reportId).setValue(report)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Problem Reported!", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to send report", Toast.LENGTH_SHORT).show());
-        }
-    }
-
     private void performLogout() {
         // 1. Clear Local Room Database in a background thread
         Executors.newSingleThreadExecutor().execute(() -> {
             localDb.clearAllTables(); // This clears your local Room cache
 
             // 2. Sign out from Firebase on the main thread
-            getActivity().runOnUiThread(() -> {
-                mAuth.signOut();
-                Toast.makeText(getContext(), "Logged Out Successfully", Toast.LENGTH_SHORT).show();
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    mAuth.signOut();
+                    Toast.makeText(getContext(), "Logged Out Successfully", Toast.LENGTH_SHORT).show();
 
-                // 3. Redirect to Login Activity (Change LoginActivity.class to your actual login class name)
-                // Intent intent = new Intent(getActivity(), LoginActivity.class);
-                // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                // startActivity(intent);
-            });
+                    // 3. Redirect to SignUp/Login Activity
+                    Intent intent = new Intent(getActivity(), SignUp.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    getActivity().finish();
+                });
+            }
         });
     }
 }
