@@ -1,123 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainCard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@mipmap/bg_sport_gradient2_foreground">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp">
 
-    <!-- العنوان الكبير -->
-    <TextView
-        android:id="@+id/TV_titleGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="GAME MISSION"
-        android:textColor="#340D3A"
-        android:textSize="32sp"
-        android:textStyle="bold" />
-
-    <!-- الكرت الرئيسي -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mainCard"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/TV_titleGame"
-        android:layout_margin="20dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="12dp">
+        android:background="#FFFFFF"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Header Image Section -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:orientation="vertical">
+            android:layout_height="160dp">
 
-            <!-- صورة -->
             <ImageView
                 android:id="@+id/gameImage"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/bg_sport_gradient_foreground" />
 
-            <!-- نوع المهمة -->
+            <!-- Dark Overlay for better text readability -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#22000000" />
+
             <TextView
                 android:id="@+id/TV_taskType"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="@string/speed_challenge"
-                android:textColor="#3B5DC5"
-                android:textSize="20sp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="16dp"
+                android:text="Fitness Warrior"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:textStyle="bold" />
+        </RelativeLayout>
 
-            <!-- بلوك النقاط والوقت -->
+        <!-- Details Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/TV_gameId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID: #1024"
+                android:textColor="#BDC3C7"
+                android:textSize="11sp"
+                android:layout_marginBottom="12dp"
+                android:letterSpacing="0.1"/>
+
+            <!-- Info Bar (3-Column Layout) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="16dp"
-                android:weightSum="2">
+                android:weightSum="2"
+                android:layout_marginBottom="16dp"
+                android:paddingVertical="8dp"
+                android:background="#F9FAFB">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center"
                     android:orientation="vertical">
-
                     <TextView
-                        android:id="@+id/TV_score"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/score"
-                        android:textColor="#0D0C0C"
-
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
+                        android:text="TIME"
+                        android:textSize="10sp"
+                        android:textColor="#95A5A6"
+                        android:textStyle="bold"/>
                     <TextView
                         android:id="@+id/TV_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/time2"
-                        android:textColor="#0D0C0C"
-                        android:textStyle="bold" />
-
+                        android:text="5 min"
+                        android:textStyle="bold"
+                        android:textColor="#2C3E50"
+                        android:textSize="16sp"/>
                 </LinearLayout>
 
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#ECF0F1"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="REWARD"
+                        android:textSize="10sp"
+                        android:textColor="#95A5A6"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/TV_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50 Pts"
+                        android:textStyle="bold"
+                        android:textColor="#E67E22"
+                        android:textSize="16sp"/>
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- ID اللعبة -->
             <TextView
-                android:id="@+id/TV_gameId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DAILY CHALLENGES"
+                android:textSize="10sp"
+                android:textColor="#7F8C8D"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:letterSpacing="0.05"/>
+
+            <TextView
+                android:id="@+id/TV_challenges_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingBottom="12dp"
-                android:text="@string/game_id_1024"
-                android:textColor="#555555" />
+                android:text="• 20 Pushups\n• 10 Squats\n• 30s Plank"
+                android:textColor="#5D6D7E"
+                android:textSize="14sp"
+                android:lineSpacingExtra="5dp"
+                android:layout_marginBottom="20dp"/>
 
-            <!-- زر رئيسي -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStart"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="54dp"
+                android:text="START MISSION"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:cornerRadius="15dp"
                 android:backgroundTint="#212466"
-                android:text="@string/start_game"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
+                android:letterSpacing="0.02" />
 
         </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-</RelativeLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

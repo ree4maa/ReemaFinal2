@@ -1,18 +1,19 @@
 package com.example.reemafinal2.data.MyTasksTable;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.reemafinal2.PlayQuestActivity;
 import com.example.reemafinal2.R;
 
 public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
@@ -30,31 +31,27 @@ public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
         if (vitem == null) {
             vitem = LayoutInflater.from(getContext()).inflate(itemLayout, parent, false);
         }
-            ImageView imageview = vitem.findViewById(R.id.gameImage);
-            TextView tvtitle = vitem.findViewById(R.id.TV_taskType);
-            TextView TV_time = vitem.findViewById(R.id.TV_time);
-            TextView TV_score = vitem.findViewById(R.id.TV_score);
-            TextView TV_gameId = vitem.findViewById(R.id.TV_gameId);
-            TextView TV_titleGame = vitem.findViewById(R.id.TV_titleGame);
-            Button btnstart = vitem.findViewById(R.id.btnStart);
 
+        TextView tvtitle = vitem.findViewById(R.id.TV_taskType);
+        TextView TV_time = vitem.findViewById(R.id.TV_time);
+        TextView TV_score = vitem.findViewById(R.id.TV_score);
+        TextView TV_gameId = vitem.findViewById(R.id.TV_gameId);
+        Button btnstart = vitem.findViewById(R.id.btnStart);
 
-            MyQuest current = getItem(position);
+        MyQuest current = getItem(position);
+        if (current != null) {
             tvtitle.setText(current.getTitle());
-            TV_time.setText(current.getTime());
-            TV_gameId.setText(current.getGameId());
-            TV_score.setText(current.getRewardpoints());
+            TV_time.setText("Time: " + current.getTime());
+            TV_gameId.setText("ID: " + current.getGameId());
+            TV_score.setText("Points: " + current.getRewardpoints());
 
-            return vitem;
-
+            btnstart.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), PlayQuestActivity.class);
+                intent.putExtra("QUEST_TITLE", current.getTitle());
+                getContext().startActivity(intent);
+            });
         }
+
+        return vitem;
     }
-
-
-
-
-
-
-
-
-
+}

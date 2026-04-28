@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg_sport_gradient2_foreground"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title Section -->
+    <TextView
+        android:id="@+id/tvQuestTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sport Challenge"
+        android:textColor="#340D3A"
+        android:textSize="32sp"
+        android:letterSpacing="0.05"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- Aesthetic Circular Timer Container -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        app:cardCornerRadius="140dp"
+        app:cardElevation="20dp"
+        android:layout_marginBottom="48dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF">
+
+            <!-- Decorative Glow/Ring Effect -->
+            <View
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_sport_gradient_background"
+                android:alpha="0.1" />
+
+            <!-- The Timer Text Group -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REMAINING"
+                    android:textSize="12sp"
+                    android:textColor="#BDC3C7"
+                    android:letterSpacing="0.2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:30"
+                    android:textColor="#212466"
+                    android:textSize="72sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed" />
+            </LinearLayout>
+
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Instruction Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#22FFFFFF"
+        android:layout_marginBottom="40dp">
+
+        <TextView
+            android:id="@+id/tvInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="Do 20 Jumping Jacks!"
+            android:textColor="#340D3A"
+            android:textSize="22sp"
+            android:textStyle="italic"
+            android:gravity="center"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Action Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDone"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="FINISH MISSION"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        app:cornerRadius="32dp"
+        android:backgroundTint="#212466"
+        app:elevation="8dp" />
+
+</LinearLayout>
