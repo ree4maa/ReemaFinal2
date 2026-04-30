@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,14 +35,24 @@ public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
         TextView TV_time = vitem.findViewById(R.id.TV_time);
         TextView TV_score = vitem.findViewById(R.id.TV_score);
         TextView TV_gameId = vitem.findViewById(R.id.TV_gameId);
+        TextView TV_challenges = vitem.findViewById(R.id.TV_challenges_list);
         Button btnstart = vitem.findViewById(R.id.btnStart);
 
         MyQuest current = getItem(position);
         if (current != null) {
-            tvtitle.setText(current.getTitle());
-            TV_time.setText("Time: " + current.getTime());
-            TV_gameId.setText("ID: " + current.getGameId());
-            TV_score.setText("Points: " + current.getRewardpoints());
+            tvtitle.setText(current.getTitle() != null ? current.getTitle() : "Untitled Quest");
+            TV_time.setText(current.getTime() != null ? current.getTime() : "N/A");
+            TV_gameId.setText("ID: " + (current.getGameId() != null ? current.getGameId() : "---"));
+            
+            // Safety: Convert int to String to avoid crashes
+            TV_score.setText(String.valueOf(current.getRewardpoints()));
+            
+            // Set challenges (if you have them in your object, otherwise use default)
+            if (current.getNote() != null && !current.getNote().isEmpty()) {
+                TV_challenges.setText(current.getNote());
+            } else {
+                TV_challenges.setText("• Complete the mission to win!");
+            }
 
             btnstart.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), PlayQuestActivity.class);

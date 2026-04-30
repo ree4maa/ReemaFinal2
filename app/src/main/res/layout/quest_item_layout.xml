@@ -39,13 +39,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="16dp"
-                android:text="Fitness Warrior"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="2"
+                android:text="Fitness Warrior"
+                android:textAllCaps="false"
+                android:textColor="#78C8C8"
+                android:textSize="22sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -60,11 +63,11 @@
                 android:id="@+id/TV_gameId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ID: #1024"
-                android:textColor="#BDC3C7"
-                android:textSize="11sp"
                 android:layout_marginBottom="12dp"
-                android:letterSpacing="0.1"/>
+                android:letterSpacing="0.1"
+                android:text="ID: #1024"
+                android:textColor="#141516"
+                android:textSize="11sp" />
 
             <!-- Info Bar (3-Column Layout) -->
             <LinearLayout
@@ -82,13 +85,14 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TIME"
+                        android:textColor="#0D1010"
                         android:textSize="10sp"
-                        android:textColor="#95A5A6"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/TV_time"
                         android:layout_width="wrap_content"
@@ -110,13 +114,14 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="REWARD"
+                        android:textColor="#17191A"
                         android:textSize="10sp"
-                        android:textColor="#95A5A6"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/TV_score"
                         android:layout_width="wrap_content"
@@ -131,22 +136,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DAILY CHALLENGES"
-                android:textSize="10sp"
-                android:textColor="#7F8C8D"
-                android:textStyle="bold"
                 android:layout_marginBottom="6dp"
-                android:letterSpacing="0.05"/>
+                android:letterSpacing="0.05"
+                android:text="DAILY CHALLENGES"
+                android:textColor="#212020"
+                android:textSize="10sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/TV_challenges_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="• 20 Pushups\n• 10 Squats\n• 30s Plank"
-                android:textColor="#5D6D7E"
-                android:textSize="14sp"
+                android:layout_marginBottom="20dp"
                 android:lineSpacingExtra="5dp"
-                android:layout_marginBottom="20dp"/>
+                android:text="• 20 Pushups\n• 10 Squats\n• 30s Plank"
+                android:textColor="#710780"
+                android:textSize="14sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStart"
