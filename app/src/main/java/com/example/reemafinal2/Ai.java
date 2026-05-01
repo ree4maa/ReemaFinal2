@@ -63,7 +63,7 @@ public class Ai extends AppCompatActivity {
         // 3. Initialize Firebase AI
         try {
             FirebaseAI aiInstance = FirebaseAI.getInstance(GenerativeBackend.googleAI());
-            model = GenerativeModelFutures.from(aiInstance.generativeModel("gemini-3-preview"));
+            model = GenerativeModelFutures.from(aiInstance.generativeModel("gemini-2.5-flash-lite"));
         } catch (Exception e) {
             Toast.makeText(this, "AI Setup Error", Toast.LENGTH_SHORT).show();
         }
@@ -110,8 +110,14 @@ public class Ai extends AppCompatActivity {
             public void onFailure(@NonNull Throwable t) {
                 btnSuggestSteps.setEnabled(true);
                 tvAiResponse.setAlpha(1.0f);
-                tvAiResponse.setText("Connection lost. Try again.");
+
+                // This will tell you the REAL reason for the failure
+                tvAiResponse.setText("Error: " + t.getMessage());
+
+                // Also show a toast for better visibility during testing
+                Toast.makeText(Ai.this, "AI Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
+
         }, executor);
     }
 
