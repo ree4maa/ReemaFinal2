@@ -41,8 +41,13 @@ dependencies {
     implementation libs.firebase.database
     implementation libs.firebase.ai
 
+
+        // Add this line to support Futures and FutureCallback
+        implementation("com.google.guava:guava:33.0.0-android")
+    
     // Room database (Local only)
     def room_version = "2.8.3"
+
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"

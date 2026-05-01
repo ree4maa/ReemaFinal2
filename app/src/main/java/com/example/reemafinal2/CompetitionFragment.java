@@ -12,10 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-//import com.google.ai.client.generativeai.Chat;
 import com.google.android.material.card.MaterialCardView;
-
-
 
 public class CompetitionFragment extends Fragment {
 
@@ -36,16 +33,25 @@ public class CompetitionFragment extends Fragment {
         // Play with Friends
         cardFriends.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Opening Friends List...", Toast.LENGTH_SHORT).show();
-            // Intent i = new Intent(getActivity(), FriendsListActivity.class);
-            // startActivity(i);
         });
 
         // Random Match
         cardRandom.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Searching for Opponent...", Toast.LENGTH_SHORT).show();
-            /// Logic for Firebase Matchmaking goes here
-
         });
+
+        // --- ADDED THIS FOR THE AI ASSISTANT ---
+        cardAI.setOnClickListener(v -> {
+            // Use getActivity() because we are inside a Fragment
+            Intent intent = new Intent(getActivity(), Ai.class);
+            startActivity(intent);
+
+            // Optional: Adds a smooth "2026 style" fade transition
+            if (getActivity() != null) {
+                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+        });
+
         return view;
     }
 }
