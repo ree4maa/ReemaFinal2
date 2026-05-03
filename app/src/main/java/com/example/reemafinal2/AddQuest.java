@@ -3,12 +3,17 @@ package com.example.reemafinal2;
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.reemafinal2.data.AppDatabase;
 import com.example.reemafinal2.data.MyTasksTable.MyQuest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
@@ -79,23 +84,56 @@ public class AddQuest extends AppCompatActivity {
         quest.setGameId(gameId);
         quest.setNote(note);
         quest.setRewardpoints(score);
-        
-        // Generate a local unique ID using current time
-        quest.setKeyid(System.currentTimeMillis()); 
 
-        // Save only to local Room database
-        new Thread(() -> {
-            try {
-                AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
-                runOnUiThread(() -> {
-                    Toast.makeText(AddQuest.this, "Quest saved locally!", Toast.LENGTH_SHORT).show();
-                    finish();
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(AddQuest.this, "Error saving quest: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            }
-        }).start();
+        // Generate a local unique ID using current time
+        quest.setKeyId(System.currentTimeMillis());
+        saveQuestToFirebase(quest);
+
     }
+    public void saveQuestToFirebase(MyQuest quest) {// الحصول على مرجع إلى عقدة "users" في قاعدة البيانات
+
+        // تهيئة Firebase Realtime Database    //مؤشر لقاعدة البيانات
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+// ‏مؤشر لجدول المستعملين
+        DatabaseReference usersRef = database.child("quests");
+        // إنشاء مفتاح فريد للمستخدم الجديد
+        DatabaseReference newUserRef = usersRef.push();
+        // تعيين معرف المستخدم في كائن MyUser
+        quest.setUserId(newUserRef.getKey());
+        // حفظ بيانات المستخدم في قاعدة البيانات
+        //اضافة كائن "لمجموعة" المستعملين ومعالج حدث لفحص نجاح المطلوب
+      //  معالج حدث لفحص هل تم المطلوب من قاعدة البيانات //
+        newUserRef.child(quest.getUserId()).setValue(quest).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "FB Task added successfully", Toast.LENGTH_SHORT).show();
+                    // Save only to local Room database
+                    new Thread(() -> {
+                        try {
+                            AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
+                            runOnUiThread(() -> {
+                                Toast.makeText(AddQuest.this, "Quest saved locally!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
+                        } catch (Exception e) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(AddQuest.this, "Error saving quest: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }).start();
+
+
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "FB Failed to add task", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        });
+
+
+    }
+
 }

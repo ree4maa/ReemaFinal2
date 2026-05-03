@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity
     public class MyQuest {
     @PrimaryKey(autoGenerate = true)
-    public long Keyid;
+    public long keyId;
   public String title;
   public String time;
   public boolean isCompleted;
@@ -21,7 +21,7 @@ import androidx.room.PrimaryKey;
     @Override
     public String toString() {
         return "MyTask{" +
-                "Keyid=" + Keyid +
+                "Keyid=" + keyId +
                 ", title='" + title + '\'' +
                 ", time='" + time + '\'' +
                 ", isCompleted=" + isCompleted +
@@ -33,12 +33,12 @@ import androidx.room.PrimaryKey;
                 '}';
     }
 
-    public long getKeyid() {
-        return Keyid;
+    public long getKeyId() {
+        return keyId;
     }
 
-    public void setKeyid(long keyid) {
-        Keyid = keyid;
+    public void setKeyId(long keyId) {
+        this.keyId = keyId;
     }
 
 

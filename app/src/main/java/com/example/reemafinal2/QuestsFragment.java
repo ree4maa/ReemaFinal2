@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.reemafinal2.data.MyTasksTable.MyQuest;
 import com.example.reemafinal2.data.MyTasksTable.MyQuestAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,11 +28,9 @@ public class QuestsFragment extends Fragment {
     private ListView lstQuests;
     private MyQuestAdapter questAdapter;
     private DatabaseReference questsRef;
-    private View btnAddQuest;
+    private FloatingActionButton btnAddQuest;
 
-    public QuestsFragment() {
-        // Required empty public constructor
-    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,17 +40,17 @@ public class QuestsFragment extends Fragment {
         // 1. Initialize UI
         lstQuests = view.findViewById(R.id.lstQuestsFragment);
         btnAddQuest = view.findViewById(R.id.btnAddQuest);
-        
+
         questAdapter = new MyQuestAdapter(getContext(), R.layout.quest_item_layout);
         lstQuests.setAdapter(questAdapter);
 
         // 2. Admin Check (Show/Hide button)
-        if(FirebaseAuth.getInstance().getCurrentUser() != null &&
-                "reema567@gmail.com".equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
-            btnAddQuest.setVisibility(View.VISIBLE);
-        } else {
-            btnAddQuest.setVisibility(View.GONE);
-        }
+//        if(FirebaseAuth.getInstance().getCurrentUser() != null &&
+//                "reema567@gmail.com".equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+//            btnAddQuest.setVisibility(View.VISIBLE);
+//        } else {
+//            btnAddQuest.setVisibility(View.GONE);
+//        }
 
         // 3. Click Listener to open AddQuest activity
         btnAddQuest.setOnClickListener(v -> {
