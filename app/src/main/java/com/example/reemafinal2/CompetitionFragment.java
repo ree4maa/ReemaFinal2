@@ -14,8 +14,13 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
 
+/**
+ * CompetitionFragment: الشاشة المسؤولة عن توجيه المستخدم لأنماط اللعب المختلفة.
+ * تحتوي على خيارات اللعب الجماعي، العشوائي، والذكاء الاصطناعي.
+ */
 public class CompetitionFragment extends Fragment {
 
+    // تعريف البطاقات التفاعلية (Material Design Cards)
     private MaterialCardView cardFriends;
     private MaterialCardView cardRandom;
     private MaterialCardView cardAI;
@@ -23,30 +28,33 @@ public class CompetitionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // ربط ملف الواجهة fragment_competition
         View view = inflater.inflate(R.layout.fragment_competition, container, false);
 
-        // Initialize Cards
+        // 1. تعريف المكونات وربطها بالـ IDs من ملف XML
         cardFriends = view.findViewById(R.id.cardFriends);
         cardRandom = view.findViewById(R.id.cardRandom);
         cardAI = view.findViewById(R.id.cardAI);
 
-        // Play with Friends
+        // 2. برمجة زر "اللعب مع الأصدقاء"
         cardFriends.setOnClickListener(v -> {
+            // حالياً تظهر رسالة تنبيه فقط (قيد التطوير)
             Toast.makeText(getActivity(), "Opening Friends List...", Toast.LENGTH_SHORT).show();
         });
 
-        // Random Match
+        // 3. برمجة زر "المنافسة العشوائية"
         cardRandom.setOnClickListener(v -> {
+            // حالياً تظهر رسالة بحث عن خصم (قيد التطوير)
             Toast.makeText(getActivity(), "Searching for Opponent...", Toast.LENGTH_SHORT).show();
         });
 
-        // --- ADDED THIS FOR THE AI ASSISTANT ---
+        // 4. برمجة زر "المساعد الذكي - AI" (ميزة مفعلة بالكامل)
         cardAI.setOnClickListener(v -> {
-            // Use getActivity() because we are inside a Fragment
+            // إنشاء نية (Intent) للانتقال لشاشة الذكاء الاصطناعي
             Intent intent = new Intent(getActivity(), Ai.class);
             startActivity(intent);
 
-            // Optional: Adds a smooth "2026 style" fade transition
+            // إضافة تأثير انتقالي ناعم (تلاشي) عند فتح الشاشة
             if (getActivity() != null) {
                 getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }

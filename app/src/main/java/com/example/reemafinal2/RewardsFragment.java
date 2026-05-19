@@ -21,27 +21,32 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors; // For Local Database threading
+import java.util.concurrent.Executors;
 
+/**
+ * RewardsFragment: الكلاس المسؤول عن عرض نظام الجوائز ولوحة الصدارة والهدف العالمي.
+ */
 public class RewardsFragment extends Fragment {
 
+    // عناصر واجهة المستخدم لعرض النقاط والرتبة
     private TextView tvTotalRewards, tvEarnedPoints, tvFriendGifts, tvMyRank, tvGlobalGoalStatus;
-    private LinearLayout leaderboardContainer;
-    private ProgressBar globalProgressBar;
+    private LinearLayout leaderboardContainer; // الحاوية التي ستعرض صفوف لوحة الصدارة
+    private ProgressBar globalProgressBar; // شريط التقدم للهدف المجتمعي
 
-    // Cloud Database (Firebase)
-    private DatabaseReference dbRef;
-    private DatabaseReference globalRef;
+    // مراجع قاعدة بيانات Firebase
+    private DatabaseReference dbRef; // مرجع المستخدمين
+    private DatabaseReference globalRef; // مرجع الإحصائيات العالمية
     private String currentUserId;
 
-    // Local Database (Room)
+    // مرجع قاعدة البيانات المحلية
     private AppDatabase localDb;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // ربط ملف الـ XML الخاص بالفرجمينت
         View view = inflater.inflate(R.layout.fragment_rewards, container, false);
 
-        // 1. Initialize UI
+        // 1. ربط العناصر البرمجية بالـ IDs في الـ XML
         tvTotalRewards = view.findViewById(R.id.tvTotalRewards);
         tvEarnedPoints = view.findViewById(R.id.tvEarnedPoints);
         tvFriendGifts = view.findViewById(R.id.tvFriendGifts);
@@ -50,21 +55,24 @@ public class RewardsFragment extends Fragment {
         globalProgressBar = view.findViewById(R.id.globalProgressBar);
         leaderboardContainer = view.findViewById(R.id.leaderboardContainer);
 
-        // 2. Initialize Firebase (Cloud Database)
+        // 2. تهيئة الاتصال بـ Firebase
         currentUserId = FirebaseAuth.getInstance().getUid();
         dbRef = FirebaseDatabase.getInstance().getReference("users");
         globalRef = FirebaseDatabase.getInstance().getReference("global_stats");
 
-        // 3. Initialize Room (Local Database)
+        // 3. تهيئة قاعدة بيانات Room المحلية
         localDb = AppDatabase.getDp(getContext());
 
-        // 4. Load Data
-        loadGlobalLeaderboard();
-        loadGlobalCommunityGoal();
+        // 4. البدء بجلب البيانات من السيرفر
+        loadGlobalLeaderboard(); // جلب لوحة الصدارة
+        loadGlobalCommunityGoal(); // جلب هدف المجتمع
 
         return view;
     }
 
+    /**
+     * جلب بيانات الهدف المشترك لجميع مستخدمي التطبيق من Firebase.
+     */
     private void loadGlobalCommunityGoal() {
         globalRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -73,9 +81,11 @@ public class RewardsFragment extends Fragment {
                     Long communityTotal = snapshot.child("communityTotal").getValue(Long.class);
                     Long goal = snapshot.child("currentGoal").getValue(Long.class);
 
+                    // قيم افتراضية في حال كانت البيانات فارغة
                     if (communityTotal == null) communityTotal = 0L;
                     if (goal == null || goal == 0) goal = 50000L;
 
+                    // تحديث النص وشريط التقدم
                     tvGlobalGoalStatus.setText("Goal: " + String.format("%,d", communityTotal) + " / " + String.format("%,d", goal));
                     int progress = (int) ((communityTotal * 100) / goal);
                     globalProgressBar.setProgress(progress);
@@ -85,7 +95,11 @@ public class RewardsFragment extends Fragment {
         });
     }
 
+    /**
+     * جلب قائمة المستخدمين وترتيبهم حسب النقاط لعرض "أفضل 5" وتحديد رتبة المستخدم الحالي.
+     */
     private void loadGlobalLeaderboard() {
+        // ترتيب المستخدمين حسب حقل totalRewards
         dbRef.orderByChild("totalRewards").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -93,32 +107,34 @@ public class RewardsFragment extends Fragment {
                 for (DataSnapshot userSnap : snapshot.getChildren()) {
                     players.add(userSnap);
                 }
+                // عكس القائمة لأن الترتيب يكون تصاعدياً ونحن نريده تنازلياً
                 Collections.reverse(players);
 
-                leaderboardContainer.removeAllViews();
+                leaderboardContainer.removeAllViews(); // مسح القائمة القديمة قبل التحديث
                 int rank = 1;
 
                 for (DataSnapshot player : players) {
+                    // جلب بيانات اللاعب الحالي في الحلقة (Loop)
                     String name = player.child("name").getValue(String.class);
                     Long total = player.child("totalRewards").getValue(Long.class);
                     Long earned = player.child("playRewards").getValue(Long.class);
                     Long friends = player.child("friendRewards").getValue(Long.class);
 
                     if (total == null) total = 0L;
-                    if (earned == null) earned = 0L;
-                    if (friends == null) friends = 0L;
 
+                    // إذا كان هذا اللاعب هو المستخدم الحالي للجهاز
                     if (player.getKey() != null && player.getKey().equals(currentUserId)) {
-                        // Update UI
+                        // تحديث واجهة المستخدم الخاصة بنقاطي
                         tvTotalRewards.setText(String.format("%,d", total));
                         tvEarnedPoints.setText(earned + " pts");
                         tvFriendGifts.setText(friends + " pts");
                         tvMyRank.setText("RANK #" + rank);
 
-                        // SYNC TO LOCAL DATABASE (Room)
+                        // مزامنة البيانات مع قاعدة البيانات المحلية Room
                         saveToLocalDatabase(total, earned, friends);
                     }
 
+                    // عرض أفضل 5 لاعبين فقط في لوحة الصدارة
                     if (rank <= 5) {
                         addLeaderboardRow(rank, name, total);
                     }
@@ -129,14 +145,19 @@ public class RewardsFragment extends Fragment {
         });
     }
 
-    // --- Local Database Logic ---
+    /**
+     * حفظ المكافآت محلياً لضمان توفرها للمستخدم في حال انقطاع الإنترنت.
+     */
     private void saveToLocalDatabase(Long total, Long earned, Long friends) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            // This part depends on your specific Room Entity (User or Reward)
-            // Example: localDb.userDao().updateRewards(currentUserId, total, earned, friends);
+            // يتم استدعاء دالة التحديث من الـ DAO الخاص بـ Room هنا
+            // مثال: localDb.userDao().updateRewards(currentUserId, total, earned, friends);
         });
     }
 
+    /**
+     * إضافة صف جديد بشكل ديناميكي داخل حاوية لوحة الصدارة.
+     */
     private void addLeaderboardRow(int rank, String name, long score) {
         View row = getLayoutInflater().inflate(R.layout.item_leaderboard, null);
         ((TextView)row.findViewById(R.id.tvRankNum)).setText(String.valueOf(rank));

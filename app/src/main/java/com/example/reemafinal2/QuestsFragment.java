@@ -23,67 +23,86 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * QuestsFragment: كلاس مسؤول عن عرض قائمة المهام المتاحة للمستخدمين.
+ * يتم جلب البيانات من Firebase وعرضها باستخدام Custom Adapter.
+ */
 public class QuestsFragment extends Fragment {
 
-    private ListView lstQuests;
-    private MyQuestAdapter questAdapter;
-    private DatabaseReference questsRef;
-    private FloatingActionButton btnAddQuest;
-
-
+    // عناصر الواجهة
+    private ListView lstQuests; // قائمة عرض المهام
+    private MyQuestAdapter questAdapter; // المحول الخاص بالمهام
+    private DatabaseReference questsRef; // مرجع قاعدة البيانات لفرع المهام
+    private FloatingActionButton btnAddQuest; // الزر العائم لإضافة مهمة جديدة
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // ربط ملف الواجهة fragment_quests
         View view = inflater.inflate(R.layout.fragment_quests, container, false);
 
-        // 1. Initialize UI
+        // 1. تعريف العناصر وربطها بالواجهة
         lstQuests = view.findViewById(R.id.lstQuestsFragment);
         btnAddQuest = view.findViewById(R.id.btnAddQuest);
 
+        // 2. إعداد الـ Adapter (المحول) لربط البيانات بالـ ListView
+        // تم استخدام تخطيط مخصص لكل عنصر (quest_item_layout)
         questAdapter = new MyQuestAdapter(getContext(), R.layout.quest_item_layout);
         lstQuests.setAdapter(questAdapter);
 
-        // 2. Admin Check (Show/Hide button)
-//        if(FirebaseAuth.getInstance().getCurrentUser() != null &&
-//                "reema567@gmail.com".equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
-//            btnAddQuest.setVisibility(View.VISIBLE);
-//        } else {
-//            btnAddQuest.setVisibility(View.GONE);
-//        }
+        /*
+         * 3. فحص الصلاحيات (Admin Check):
+         * الكود أدناه يقوم بإظهار زر الإضافة فقط إذا كان البريد الإلكتروني يخص مدير النظام.
+         */
+        // if(FirebaseAuth.getInstance().getCurrentUser() != null &&
+        //    "reema567@gmail.com".equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+        //     btnAddQuest.setVisibility(View.VISIBLE);
+        // } else {
+        //     btnAddQuest.setVisibility(View.GONE);
+        // }
 
-        // 3. Click Listener to open AddQuest activity
+        // 4. برمجة زر الإضافة لفتح شاشة AddQuest
         btnAddQuest.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddQuest.class);
             startActivity(intent);
         });
 
-        // 4. Load Data from Firebase
+        // 5. تهيئة مرجع Firebase للوصول لجدول "quests"
         questsRef = FirebaseDatabase.getInstance().getReference("quests");
+
+        // جلب البيانات من السيرفر
         loadQuestsFromFirebase();
 
         return view;
     }
 
+    /**
+     * دالة تقوم بمراقبة قاعدة البيانات وجلب المهام فور توفرها أو تحديثها.
+     */
     private void loadQuestsFromFirebase() {
+        // الاستماع للتغييرات في السيرفر بشكل حي
         questsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<MyQuest> quests = new ArrayList<>();
+
+                // المرور على جميع المهام القادمة من السيرفر
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     MyQuest quest = dataSnapshot.getValue(MyQuest.class);
                     if (quest != null) {
                         quests.add(quest);
                     }
                 }
-                questAdapter.clear();
-                questAdapter.addAll(quests);
-                questAdapter.notifyDataSetChanged();
+
+                // تحديث القائمة في الواجهة
+                questAdapter.clear(); // مسح البيانات القديمة لتجنب التكرار
+                questAdapter.addAll(quests); // إضافة القائمة الجديدة
+                questAdapter.notifyDataSetChanged(); // إبلاغ الـ ListView بالتحديث لعرض البيانات
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error
+                // يمكن إضافة معالجة للأخطاء هنا في حال فشل الاتصال بالسيرفر
             }
         });
     }

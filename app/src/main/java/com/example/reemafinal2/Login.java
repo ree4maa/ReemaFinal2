@@ -3,11 +3,11 @@ package com.example.reemafinal2;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns; // لاستخدامه في التحقق من صيغة الايميل
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast; // لعرض رسائل للمستخدم
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,132 +21,131 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Login Activity: الشاشة المسؤولة عن تسجيل دخول المستخدمين.
+ * تدعم التحقق من البيانات عبر Firebase وعرض الأخطاء بشكل تفاعلي.
+ */
 public class Login extends AppCompatActivity {
-    // تم تغيير اسماء المتغيرات لتكون أوضح
+
+    // تعريف عناصر واجهة المستخدم باستخدام Material Design
     private TextInputLayout emailLayout;
     private TextInputLayout passwordLayout;
     private TextInputEditText emailEditText;
     private TextInputEditText passwordEditText;
     private Button loginButton;
-    private TextView signUpText;
     private Button signUpButton;
+
+    // مرجع المصادقة من Firebase
     private FirebaseAuth mAuth;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        EdgeToEdge.enable(this); // تفعيل العرض ملء الشاشة
         setContentView(R.layout.activity_login);
+
         mAuth = FirebaseAuth.getInstance();
 
-        // --- ربط المتغيرات بواجهة المستخدم ---
-        // تأكد من أن هذه هي الـ IDs الصحيحة في ملف activity_login.xml
-        emailLayout = findViewById(R.id.emailLayout); // يجب إضافة هذا ID في ملف XML
-        passwordLayout = findViewById(R.id.passwordLayout); // يجب إضافة هذا ID في ملف XML
+        // 1. ربط المتغيرات بالمعرفات (IDs) في ملف XML
+        emailLayout = findViewById(R.id.emailLayout);
+        passwordLayout = findViewById(R.id.passwordLayout);
         emailEditText = findViewById(R.id.Etext1);
         passwordEditText = findViewById(R.id.Etext2);
         loginButton = findViewById(R.id.btn_log);
         signUpButton = findViewById(R.id.btn_sign);
 
+        // 2. فحص الحالة: إذا كان المستخدم مسجلاً مسبقاً، لا داعي لطلب الدخول ثانية
         if(mAuth.getCurrentUser() != null){
-            Intent intent = new Intent(Login.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            navigateToMain();
         }
 
-        // --- التعامل مع ضغطات الأزرار ---
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // استدعاء دالة التحقق قبل محاولة تسجيل الدخول
-                if (validateFields()) {
-                    String email = emailEditText.getText().toString().trim();
-                    String password = passwordEditText.getText().toString().trim();
-                    loginWithFirebase(email, password);
-
-                    //الكود يقوم بتسجيل دخول المستخدم عبر Firebase،
-                    // وإذا نجح ينقله للصفحة الرئيسية، وإذا فشل يعرض رسالة خطأ.
-                }
+        // 3. مستمع حدث النقر لزر تسجيل الدخول
+        loginButton.setOnClickListener(v -> {
+            if (validateFields()) { // استدعاء دالة التحقق
+                String email = emailEditText.getText().toString().trim();
+                String password = passwordEditText.getText().toString().trim();
+                loginWithFirebase(email, password);
             }
         });
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Login.this, SignUp.class);
-                startActivity(intent);
-            }
+        // 4. الانتقال لشاشة إنشاء حساب جديد
+        signUpButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Login.this, SignUp.class);
+            startActivity(intent);
         });
 
+        // ضبط هوامش النظام (StatusBar & NavigationBar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
+
+    /**
+     * تنفيذ عملية المصادقة عبر سيرفر Firebase.
+     */
     private void loginWithFirebase(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Login success
-                        Toast.makeText(Login.this, "Login successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Login.this, MainActivity.class);
-                        startActivity(intent);
-                        finish(); // Close login activity so user can't go back
+                        Toast.makeText(Login.this, "Login successful ✨", Toast.LENGTH_SHORT).show();
+                        navigateToMain();
                     } else {
-                        // Login failed
+                        // عرض رسالة الخطأ القادمة من السيرفر
                         String error = task.getException() != null ? task.getException().getMessage() : "Authentication failed";
                         Toast.makeText(Login.this, "Error: " + error, Toast.LENGTH_LONG).show();
                         passwordLayout.setError("Incorrect email or password");
                     }
                 });
     }
+
     /**
-     * دالة للتحقق من صحة حقول الإدخال (الايميل وكلمة المرور).
-     * @return true إذا كانت جميع الحقول صالحة, و false إذا كان هناك خطأ.
+     * فحص مدخلات المستخدم والتأكد من مطابقتها للمعايير قبل إرسالها.
      */
     private boolean validateFields() {
         boolean isValid = true;
-
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        // 1. التحقق من حقل الايميل
+        // التحقق من صحة البريد الإلكتروني
         if (email.isEmpty()) {
             emailLayout.setError("Valid email is required");
             isValid = false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            // التحقق من أن صيغة الايميل صحيحة
-            emailLayout.setError("email is not correct");
+            emailLayout.setError("Format is incorrect (e.g. name@example.com)");
             isValid = false;
         } else {
-            // إذا كان الحقل صحيحاً، قم بإزالة رسالة الخطأ
             emailLayout.setError(null);
         }
 
-        // 2. التحقق من حقل كلمة المرور
-        if (password.isEmpty()|| email.isEmpty()) {
-            passwordLayout.setError("Valid password is required");
-            emailLayout.setError("Valid email is required");
+        // التحقق من قوة كلمة المرور
+        if (password.isEmpty()) {
+            passwordLayout.setError("Password is required");
             isValid = false;
         } else if (password.length() < 6) {
-            passwordLayout.setError("password at least 8 characters");
+            passwordLayout.setError("Password must be at least 6 characters");
             isValid = false;
         } else {
-            // إذا كان الحقل صحيحاً، قم بإزالة رسالة الخطأ
             passwordLayout.setError(null);
         }
 
-//todo add firebase auth for sign in
-        MyPlayer myPlayer = AppDatabase.getDp(this).myUserQuery().checkEmailPassword(email,password);
-        if (myPlayer != null){
-            Toast.makeText(this,"login successful",Toast.LENGTH_SHORT).show();
-//            Intent intent = new Intent(Login.this, MainActivity.class);
-//            startActivity(intent);
+        // فحص قاعدة البيانات المحلية (Room) لضمان مزامنة المستخدم
+        MyPlayer myPlayer = AppDatabase.getDp(this).myUserQuery().checkEmailPassword(email, password);
+        if (myPlayer != null) {
             return true;
         }
 
         return isValid;
+    }
+
+    /**
+     * دالة مساعدة للانتقال للشاشة الرئيسية وإغلاق شاشة الدخول.
+     */
+    private void navigateToMain() {
+        Intent intent = new Intent(Login.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

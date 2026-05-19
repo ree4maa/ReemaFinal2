@@ -25,105 +25,130 @@ import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.Executors;
 
+/**
+ * LevelFragment: المسؤول عن عرض إحصائيات مستوى اللاعب، نقاط الخبرة (XP)، وصورة الملف الشخصي.
+ */
 public class LevelFragment extends Fragment {
 
-    private ShapeableImageView imgProfile;
+    // عناصر الواجهة
+    private ShapeableImageView imgProfile; // صورة الملف الشخصي (بزوايا مقصوصة)
     private TextView tvPlayerName, tvCurrentLevel, tvXpPercentage;
-    private ProgressBar xpProgressBar;
+    private ProgressBar xpProgressBar; // شريط عرض التقدم في المستوى
 
-    // Firebase
+    // مراجع قواعد البيانات
     private DatabaseReference userRef;
     private FirebaseAuth mAuth;
-
-    // Local Database (Room)
     private AppDatabase localDb;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // ربط ملف الـ XML
         View view = inflater.inflate(R.layout.fragment_level, container, false);
 
-        // 1. Initialize UI Views
+        // 1. تعريف العناصر وربطها بالـ IDs
         imgProfile = view.findViewById(R.id.imgProfile);
         tvPlayerName = view.findViewById(R.id.tvPlayerName);
         tvCurrentLevel = view.findViewById(R.id.tvCurrentLevel);
         tvXpPercentage = view.findViewById(R.id.tvXpPercentage);
         xpProgressBar = view.findViewById(R.id.xpProgressBar);
 
-        // 2. Initialize Databases
+        // 2. تهيئة قواعد البيانات (سحابية ومحلية)
         mAuth = FirebaseAuth.getInstance();
-        localDb = AppDatabase.getDp(getContext()); // Ensure your AppDatabase has this method
+        localDb = AppDatabase.getDp(getContext());
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
+            // تحديد مسار المستخدم في Firebase Realtime Database
             userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
-            // Load from Firebase and Sync to Local
+            // جلب البيانات من السيرفر ومزامنتها محلياً
             loadAndSyncData();
         } else {
-            loadLocalDataOnly(); // If not logged in, show local guest data
+            // في حال عدم وجود إنترنت أو تسجيل دخول، يتم الاعتماد على البيانات المحلية
+            loadLocalDataOnly();
         }
 
         return view;
     }
 
+    /**
+     * الاستماع لتغييرات البيانات في Firebase وتحديث الواجهة والمزامنة مع Room.
+     */
     private void loadAndSyncData() {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    // جلب القيم من الـ Snapshot
                     String name = snapshot.child("name").getValue(String.class);
                     Long level = snapshot.child("level").getValue(Long.class);
                     Long xp = snapshot.child("xp").getValue(Long.class);
                     String profilePicUrl = snapshot.child("profilePic").getValue(String.class);
 
-                    // Update UI immediately from Firebase
+                    // تحديث واجهة المستخدم فوراً
                     updateUI(name, level, xp, profilePicUrl);
 
-                    // Sync to Local Room Database in background
+                    // حفظ نسخة احتياطية في قاعدة بيانات الجهاز (خلفية التطبيق)
                     syncToLocal(name, level, xp);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                loadLocalDataOnly(); // If Firebase fails, use local data
+                // في حال فشل الاتصال، يتم الانتقال لوضع البيانات المحلية
+                loadLocalDataOnly();
             }
         });
     }
 
+    /**
+     * توزيع البيانات المستلمة على عناصر الشاشة.
+     */
     private void updateUI(String name, Long level, Long xp, String profilePicUrl) {
         tvPlayerName.setText(name != null ? name : "Player");
         tvCurrentLevel.setText(String.valueOf(level != null ? level : 1));
 
         int currentXp = (xp != null) ? xp.intValue() : 0;
-        xpProgressBar.setMax(100); // Or your max level XP
+        xpProgressBar.setMax(100); // القيمة القصوى للمستوى الحالي
         xpProgressBar.setProgress(currentXp);
         tvXpPercentage.setText(currentXp + " / 100");
 
+        // استخدام Picasso لتحميل الصورة بذكاء مع صورة افتراضية في حال التأخير
         if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
-            Picasso.get().load(profilePicUrl).placeholder(android.R.drawable.ic_menu_gallery).into(imgProfile);
+            Picasso.get()
+                    .load(profilePicUrl)
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .into(imgProfile);
         }
     }
 
+    /**
+     * حفظ البيانات المستلمة من السيرفر داخل قاعدة بيانات Room لضمان توفرها Offline.
+     */
     private void syncToLocal(String name, Long level, Long xp) {
         Executors.newSingleThreadExecutor().execute(() -> {
-            // Create a User object compatible with your Room Entity
-            // Example: MyUser user = new MyUser(name, level.intValue(), xp.intValue());
-            // localDb.userDao().insert(user);
+            // ملاحظة: يتم هنا استدعاء الـ DAO الخاص بك لتحديث بيانات المستخدم
+            // Example: localDb.userDao().updateUserData(name, level, xp);
         });
     }
 
+    /**
+     * جلب البيانات من قاعدة البيانات المحلية Room في حال عدم توفر اتصال بالإنترنت.
+     */
     private void loadLocalDataOnly() {
         Executors.newSingleThreadExecutor().execute(() -> {
-            // Fetch from Room
-            // MyUser localUser = localDb.userDao().getUser();
-            // getActivity().runOnUiThread(() -> updateUI(localUser.name, ...));
+            // يتم استرجاع البيانات من الجهاز وعرضها عبر الـ UI Thread
+            // MyUser user = localDb.userDao().getUser();
+            // getActivity().runOnUiThread(() -> updateUI(user.name, ...));
         });
     }
 
+    /**
+     * دالة لتحديث شريط التقدم بشكل مخصص.
+     */
     private void updateXPUI(int currentXp, int maxXp) {
         xpProgressBar.setMax(maxXp);
         xpProgressBar.setProgress(currentXp);

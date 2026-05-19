@@ -32,28 +32,34 @@ import com.google.firebase.ai.type.GenerativeBackend;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 
+/**
+ * Ai Activity: كلاس المساعد الذكي الذي يربط بين Gemini AI ومحرك النطق الصوتي.
+ */
 public class Ai extends AppCompatActivity {
 
     private EditText etTopic;
     private MaterialButton btnSuggestSteps;
     private TextView tvAiResponse;
     private MaterialCardView responseCard;
+
+    // مرجع نموذج الذكاء الاصطناعي
     private GenerativeModelFutures model;
+    // محرك تحويل النص إلى صوت
     private TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        EdgeToEdge.enable(this); // تفعيل مظهر الشاشة الكاملة الحديث
         setContentView(R.layout.activity_ai);
 
-        // 1. ربط العناصر بالواجهة (IDs من ملف XML الخاص بك)
+        // 1. ربط عناصر الواجهة
         etTopic = findViewById(R.id.topic);
         btnSuggestSteps = findViewById(R.id.btnSuggestSteps);
         tvAiResponse = findViewById(R.id.tvAiResponse);
         responseCard = findViewById(R.id.responseCard);
 
-        // 2. ضبط الهوامش العلوية (StatusBar)
+        // 2. معالجة هوامش شريط الحالة (StatusBar) لضمان عدم تداخل التصميم
         View headerLayout = findViewById(R.id.header);
         if (headerLayout != null) {
             ViewCompat.setOnApplyWindowInsetsListener(headerLayout, (v, insets) -> {
@@ -63,31 +69,27 @@ public class Ai extends AppCompatActivity {
             });
         }
 
-        // في onCreate استبدل الجزء رقم 3 بهذا:
+        // 3. تهيئة محرك النطق الصوتي (TTS)
         tts = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 int result = tts.setLanguage(Locale.US);
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    Toast.makeText(this, "English language not supported", Toast.LENGTH_SHORT).show();
-                } else {
-                    // اختبار صوتي بمجرد التشغيل للتأكد
+                if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                    // رسالة ترحيبية صوتية للتأكد من جاهزية النظام
                     tts.speak("AI Voice System Ready", TextToSpeech.QUEUE_FLUSH, null, null);
                 }
-            } else {
-                Toast.makeText(this, "TTS Initialization Failed", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // 4. تهيئة الذكاء الاصطناعي (Gemini AI)
+        // 4. إعداد اتصال Firebase بالذكاء الاصطناعي (Gemini)
         try {
             FirebaseAI aiInstance = FirebaseAI.getInstance(GenerativeBackend.googleAI());
-            // استخدمنا 1.5-flash لأنه الأسرع والأكثر استقراراً حالياً
+            // استخدام نسخة الـ Flash لضمان سرعة الرد
             model = GenerativeModelFutures.from(aiInstance.generativeModel("gemini-2.5-flash-lite"));
         } catch (Exception e) {
             Toast.makeText(this, "AI Setup Error", Toast.LENGTH_SHORT).show();
         }
 
-        // 5. برمجة زر طلب المساعدة
+        // 5. حدث النقر لطلب الخطة من الـ AI
         btnSuggestSteps.setOnClickListener(v -> {
             String topic = etTopic.getText().toString().trim();
             if (!topic.isEmpty()) {
@@ -97,17 +99,20 @@ public class Ai extends AppCompatActivity {
             }
         });
 
-        // 6. نسخ النص عند الضغط المطول على الإجابة
+        // 6. ميزة النسخ السريع عند الضغط المطول على الإجابة
         tvAiResponse.setOnLongClickListener(v -> {
             copyToClipboard(tvAiResponse.getText().toString());
             return true;
         });
     }
 
+    /**
+     * إرسال الطلب للـ AI ومعالجة الرد صوتياً وبصرياً.
+     */
     private void generateAIPlan(String topic) {
         if (model == null) return;
 
-        // تأثير بصري أثناء التحميل
+        // تهيئة الواجهة لحالة الانتظار
         tvAiResponse.setAlpha(0.3f);
         tvAiResponse.setText("Thinking...");
         btnSuggestSteps.setEnabled(false);
@@ -125,25 +130,22 @@ public class Ai extends AppCompatActivity {
                 String responseText = result.getText();
                 btnSuggestSteps.setEnabled(true);
 
-                // 1. تحديث الواجهة والأنيميشن
+                // تحديث النص مع أنيميشن الظهور
                 animateResponse(responseText);
 
-                // 2. النطق الصوتي "المنظف الشامل"
+                // معالجة النطق الصوتي
                 if (responseText != null && tts != null) {
-
-                    // تنظيف النص من كل شيء (نجوم، أقواس، نقاط، شرطات، مربعات، علامات تعجب، إلخ)
+                    // إزالة الرموز التقنية لضمان نطق سلس
                     String cleanText = responseText
                             .replaceAll("[\\*\\#\\(\\)\\[\\]\\{\\}\\-_+=/\\\\|> <~\\!\\?@\\$%\\^&\\.]", " ")
-                            .replaceAll("\\s+", " ") // تحويل أي مسافات زائدة لمسافة واحدة
+                            .replaceAll("\\s+", " ")
                             .trim();
 
-                    // التأكد من أن النص ليس فارغاً بعد التنظيف
                     if (!cleanText.isEmpty()) {
                         Bundle params = new Bundle();
                         params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1.0f);
-
-                        // استخدام QUEUE_FLUSH لقطع أي صوت قديم والبدء فوراً
-                        tts.speak(cleanText, TextToSpeech.QUEUE_FLUSH, params, "AI_RESPONSE_ID");
+                        // نطق النص الجديد فوراً وإلغاء أي نطق قديم
+                        tts.speak(cleanText, TextToSpeech.QUEUE_FLUSH, params, "AI_ID");
                     }
                 }
             }
@@ -153,23 +155,22 @@ public class Ai extends AppCompatActivity {
                 btnSuggestSteps.setEnabled(true);
                 tvAiResponse.setAlpha(1.0f);
                 tvAiResponse.setText("Error: " + t.getMessage());
-                Toast.makeText(Ai.this, "AI Error!", Toast.LENGTH_LONG).show();
             }
         }, executor);
     }
 
-    // --- أنيميشن حديثة (2026 Style) ---
+    /**
+     * تطبيق تأثيرات بصرية حديثة (Fade & Pulse) على الرد.
+     */
     private void animateResponse(String text) {
-        // تأثير الظهور التدريجي للنص
         AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
         fadeIn.setDuration(1000);
-
         tvAiResponse.setText(text);
         tvAiResponse.setAlpha(1.0f);
         tvAiResponse.startAnimation(fadeIn);
 
-        // تأثير النبض للبطاقة الزجاجية
         if (responseCard != null) {
+            // حركة نبض بسيطة للبطاقة لجذب الانتباه
             responseCard.animate()
                     .scaleX(1.02f)
                     .scaleY(1.02f)
@@ -179,18 +180,21 @@ public class Ai extends AppCompatActivity {
         }
     }
 
+    /**
+     * نسخ الخطة المولدة إلى حافظة الجهاز.
+     */
     private void copyToClipboard(String text) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("AI Plan", text);
         if (clipboard != null) {
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this, "Plan copied to clipboard! ✨", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Plan copied! ✨", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     protected void onDestroy() {
-        // إغلاق محرك النطق عند الخروج من الصفحة لتوفير الذاكرة
+        // تنظيف الذاكرة وإغلاق محرك الصوت فور إغلاق الصفحة
         if (tts != null) {
             tts.stop();
             tts.shutdown();

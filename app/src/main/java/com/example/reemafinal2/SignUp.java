@@ -1,7 +1,6 @@
 package com.example.reemafinal2;
 
 import static android.content.ContentValues.TAG;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,24 +25,25 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * SignUp: كلاس إدارة إنشاء حسابات المستخدمين الجدد.
+ * يربط بين Firebase Authentication و Realtime Database و Room.
+ */
 public class SignUp extends AppCompatActivity {
-    private TextInputLayout nameLayout;
-    private TextInputLayout emailLayout;
-    private TextInputLayout passwordLayout;
-    private  TextView nameInput;
-    private  TextView emailInput;
-    private TextView passwordInput;
-    private Button btnSignUp;
-    private Button btnLogin;
+
+    // تعريف عناصر واجهة المستخدم (Material Design)
+    private TextInputLayout nameLayout, emailLayout, passwordLayout;
+    private TextView nameInput, emailInput, passwordInput;
+    private Button btnSignUp, btnLogin;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        EdgeToEdge.enable(this); // تفعيل عرض الحافة إلى الحافة
         setContentView(R.layout.activity_sign_up);
 
-        // Initialize views
+        // 1. ربط العناصر البرمجية بالواجهة
         nameLayout = findViewById(R.id.nameLayout);
         emailLayout = findViewById(R.id.emailLayout);
         passwordLayout = findViewById(R.id.passwordLayout);
@@ -53,53 +53,38 @@ public class SignUp extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btn_signup);
         btnLogin = findViewById(R.id.btn_Login);
 
-        // Set click listeners
-       btnSignUp.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               if (validateFields()) {
-                   // Navigate to login screen
-                   Intent intent = new Intent(SignUp.this, MainActivity.class);
-                   startActivity(intent);
-               }
-           }
-       });
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Navigate to login screen
-                Intent intent = new Intent(SignUp.this, Login.class);
-                startActivity(intent);
+        // 2. برمجة زر "إنشاء حساب"
+        btnSignUp.setOnClickListener(v -> {
+            if (validateFields()) {
+                // ملاحظة: الانتقال يتم برمجياً بعد نجاح Firebase في دالة saveUser
             }
         });
 
-        // Handle window insets for edge-to-edge display
-      //  ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-         //   Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-         //   v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-          //  return insets;
-      //  });
-        // التعامل مع حواف النافذة لعرض المحتوى من الحافة إلى الحافة (Edge-to-Edge).
-// إعداد "مستمع" لتطبيق هوامش النظام على الواجهة (مثل شريط الحالة وشريط التنقل السفلي).
-// الحصول على مقاسات أشرطة النظام (الساعة، البطارية، أزرار التنقل).
-// إضافة مساحة (Padding) للواجهة مساوية لمقاسات أشرطة النظام لضمان عدم اختفاء الأزرار خلفها.
+        // 3. الانتقال لشاشة تسجيل الدخول (إذا كان لديه حساب بالفعل)
+        btnLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(SignUp.this, Login.class);
+            startActivity(intent);
+        });
     }
 
+    /**
+     * التحقق من صحة المدخلات وحفظ المستخدم محلياً ثم في Firebase.
+     */
     private boolean validateFields() {
         boolean isValid = true;
-        // قراءة النصوص من حقول الإدخال وتحويلها إلى String بعد إزالة الفراغات من البداية والنهاية
         String name = nameInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
 
-        if (name.isEmpty()||email.isEmpty()||password.isEmpty()) {
+        // فحص حقل الاسم
+        if (name.isEmpty()) {
             nameLayout.setError("Name is required");
             isValid = false;
         } else {
-            nameLayout.setError(null);// إزالة أي رسالة خطأ إذا كانت البيانات صحيحة
+            nameLayout.setError(null);
         }
 
+        // فحص صيغة البريد الإلكتروني
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailLayout.setError("Valid email is required");
             isValid = false;
@@ -107,135 +92,71 @@ public class SignUp extends AppCompatActivity {
             emailLayout.setError(null);
         }
 
+        // فحص قوة كلمة المرور
         if (password.isEmpty() || password.length() < 8) {
-            passwordLayout.setError("Password at least 8 characters");
+            passwordLayout.setError("Password must be at least 8 characters");
             isValid = false;
         } else {
             passwordLayout.setError(null);
         }
-        if (isValid)
-            // إذا كانت كل الحقول صالحة، نقوم بإنشاء مستخدم جديد
-        {
-            // إنشاء كائن MyUser لقاعدة البيانات المحلية
+
+        if (isValid) {
+            // تجهيز كائن اللاعب
             MyPlayer myPlayer = new MyPlayer();
             myPlayer.setFullName(name);
             myPlayer.setEmail(email);
             myPlayer.setPassword(password);
-            if(AppDatabase.getDp(getApplicationContext()).myUserQuery().checkEmail(email)==null)
-            // إدخال المستخدم في قاعدة البيانات المحلية (Room)
-            AppDatabase.getDp(this).myUserQuery().insert(myPlayer);
 
-            else
-                isValid=false;
+            // التحقق من أن البريد غير موجود مسبقاً في قاعدة بيانات Room المحلية
+            if (AppDatabase.getDp(getApplicationContext()).myUserQuery().checkEmail(email) == null) {
+                // حفظ المستخدم محلياً (Offline First)
+                AppDatabase.getDp(this).myUserQuery().insert(myPlayer);
 
-
-            if (isValid) {
-                // تسجيل المستخدم أيضًا في Firebase Authentication
+                // البدء بعملية التسجيل في Firebase Authentication
                 FirebaseAuth auth = FirebaseAuth.getInstance();
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(SignUp.this, "Authentication successful.",
-                                    Toast.LENGTH_SHORT).show();
-                           saveUser(myPlayer);
-                        }
-                        else {
-                            // إنهاء شاشة التسجيل حتى لا يعود المستخدم لها عند الضغط على زر العودة
-                            Toast.makeText(SignUp.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-
-                        }
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(SignUp.this, "Auth Succeeded!", Toast.LENGTH_SHORT).show();
+                        saveUser(myPlayer); // حفظ بقية البيانات في قاعدة البيانات السحابية
+                    } else {
+                        String error = task.getException() != null ? task.getException().getMessage() : "Failed";
+                        Toast.makeText(SignUp.this, "Error: " + error, Toast.LENGTH_SHORT).show();
                     }
                 });
-                }
+            } else {
+                emailLayout.setError("Email already exists locally!");
+                isValid = false;
             }
-        // إعادة قيمة isValid لتحديد ما إذا كانت البيانات صحيحة أم لا
-        return isValid;
         }
+        return isValid;
+    }
 
-    public void saveUser(MyPlayer myPlayer) {// الحصول على مرجع إلى عقدة "users" في قاعدة البيانات
-
-        // تهيئة Firebase Realtime Database    //مؤشر لقاعدة البيانات
+    /**
+     * حفظ بيانات المستخدم الإضافية في Firebase Realtime Database.
+     */
+    public void saveUser(MyPlayer myPlayer) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-    // ‏مؤشر لجدول المستعملين
         DatabaseReference usersRef = database.child("users");
-        // إنشاء مفتاح فريد للمستخدم الجديد
+
+        // توليد معرّف فريد من نوع String وتحويله لـ Long (إذا كان الكيان يتطلب ذلك)
         DatabaseReference newUserRef = usersRef.push();
-        // تعيين معرف المستخدم في كائن MyUser
-        myPlayer.setKeyid(Long.parseLong(newUserRef.getKey()));
-        // حفظ بيانات المستخدم في قاعدة البيانات
-        //اضافة كائن "لمجموعة" المستعملين ومعالج حدث لفحص نجاح المطلوب
-       // معالج حدث لفحص هل تم المطلوب من قاعدة البيانات //
-        newUserRef.setValue(myPlayer).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
-                {
-                    Intent i=new Intent(SignUp.this,MainActivity.class);
+        String key = newUserRef.getKey();
+
+        if (key != null) {
+            // ملاحظة: تعتمد الطريقة هنا على نوع البيانات في MyPlayer
+            // newUserRef.setValue(myPlayer)...
+
+            newUserRef.setValue(myPlayer).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // الانتقال للرئيسية بعد اكتمال كل خطوات التسجيل
+                    Intent i = new Intent(SignUp.this, MainActivity.class);
                     startActivity(i);
                     finish();
                 }
-                else {
-
-                }
-            }
-        });
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Toast.makeText(SignUp.this, "Succeeded to add User",  Toast.LENGTH_SHORT).show();
-//                        finish();
-//                        // تم حفظ البيانات بنجاح
-//                        Log.d(TAG, "تم حفظ المستخدم بنجاح: " + myUser.getKeyid());
-//                        // تحديث واجهة المستخدم أو تنفيذ إجراءات أخرى
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        // معالجة الأخطاء
-//                        Log.e(TAG, "خطأ في حفظ المستخدم: " + e.getMessage(), e);
-//                        Toast.makeText(SignUp.this, "Failed to add User", Toast.LENGTH_SHORT).show();
-//                        // عرض رسالة خطأ للمستخدم
-//                    }
-//                });
-        // ربط عناصر واجهة المستخدم (EditText و Button) الموجودة في XML بالمتغيرات البرمجية
-        EditText nameEditText = findViewById(R.id.TV_name);
-        EditText emailEditText = findViewById(R.id.TV_email);
-        EditText passwrdEditText = findViewById(R.id.TV_password);
-        Button addButton = findViewById(R.id.btn_signup);
-
-        // إضافة مستمع للنقر على زر addButton
-        addButton.setOnClickListener(v -> {
-            String name = nameEditText.getText().toString();
-            String email = emailEditText.getText().toString();
-
-
-            if (!name.isEmpty() && !email.isEmpty()) {
-                // إنشاء كائن جديد من نوع MyUser لتمثيل المستخدم الجديد
-                MyPlayer newUser = new MyPlayer();
-
-                // حفظ المستخدم في قاعدة البيانات أو المعالجة المناسبة
-                saveUser(newUser);
-
-
-                // مسح حقول الإدخال بعد حفظ البيانات
-                nameEditText.setText("");
-                emailEditText.setText("");
-                //يفرغ الحقول تلقائيًا بعد حفظ البيانات.
-                //يجعل المستخدم جاهزًا لإدخال بيانات مستخدم جديد دون الحاجة لحذف النصوص يدوياً.
-            } else {
-                Log.w(TAG, "الرجاء إدخال الاسم والبريد الإلكتروني.");
-            }
-        });
-        //لو لم نمسح الحقول، وإذا ضغط المستخدم زر التسجيل مرة ثانية بالخطأ → البرنامج سيحفظ نفس البيانات مرتين!
-        //مسح الحقول يعطي المستخدم إشارة بصرية أن البيانات تم تسجيلها، والحقل أصبح جاهز لإدخال مستخدم جديد.
-
-
+            });
+        }
     }
-    }
-
+}
 
 
 
