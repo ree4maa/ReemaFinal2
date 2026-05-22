@@ -8,7 +8,7 @@
     android:background="#0A061E"
     tools:context=".Ai">
 
-    <!-- 1. Layered Mesh Gradient (Rich background) -->
+    <!-- 1. الخلفية المتدرجة (Mesh Gradient Background) -->
     <View
         android:layout_width="600dp"
         android:layout_height="600dp"
@@ -19,7 +19,7 @@
         android:layout_marginStart="-200dp"
         android:alpha="0.6"/>
 
-    <!-- 2. Rich Header with Glass Badge -->
+    <!-- 2. الجزء العلوي (Header) مع زر العودة -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -52,10 +52,15 @@
                 android:textSize="28sp" />
         </LinearLayout>
 
+        <!-- زر العودة لصفحة المنافسات -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnBackToCompetition"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
             app:cardCornerRadius="14dp"
             app:cardBackgroundColor="#22FFFFFF"
             app:strokeWidth="1dp"
@@ -64,13 +69,13 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@android:drawable/ic_menu_help"
+                android:src="@android:drawable/ic_menu_revert"
                 android:padding="12dp"
                 app:tint="#FFFFFF"/>
         </com.google.android.material.card.MaterialCardView>
     </RelativeLayout>
 
-    <!-- 3. The Response "Glass Card" (With Stop Button) -->
+    <!-- 3. بطاقة عرض إجابة الذكاء الاصطناعي مع زر إيقاف الصوت -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/responseCard"
         android:layout_width="match_parent"
@@ -118,7 +123,7 @@
                 </androidx.core.widget.NestedScrollView>
             </LinearLayout>
 
-            <!-- زر التوقف (Stop Button) -->
+            <!-- زر التوقف (Stop Button) لإسكات الصوت -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStopSpeech"
                 style="@style/Widget.Material3.Button.IconButton"
@@ -132,7 +137,7 @@
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- 4. The Interactive Floating Console -->
+    <!-- 4. منطقة إدخال النص وزر الإرسال السفلي -->
     <LinearLayout
         android:id="@+id/inputArea"
         android:layout_width="match_parent"

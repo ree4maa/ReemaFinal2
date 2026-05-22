@@ -60,6 +60,16 @@ public class Ai extends AppCompatActivity {
         tvAiResponse = findViewById(R.id.tvAiResponse);
         responseCard = findViewById(R.id.responseCard);
         btnStopSpeech = findViewById(R.id.btnStopSpeech);
+        // ابحث عن زر العودة وقم ببرمجته
+        View btnBack = findViewById(R.id.btnBackToCompetition);
+        btnBack.setOnClickListener(v -> {
+            // بما أن صفحة الـ AI فُتحت فوق الـ MainActivity
+            // فبمجرد إغلاق هذه الصفحة (finish) ستظهر صفحة الـ Competition تلقائياً
+            finish();
+
+            // إضافة أنيميشن بسيط لجعل الرجوع ناعم واحترافي
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        });
 
         // 2. معالجة هوامش شريط الحالة (StatusBar) لضمان عدم تداخل التصميم
         View headerLayout = findViewById(R.id.header);
