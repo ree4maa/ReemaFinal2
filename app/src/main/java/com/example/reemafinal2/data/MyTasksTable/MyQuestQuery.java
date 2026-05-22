@@ -1,8 +1,10 @@
 package com.example.reemafinal2.data.MyTasksTable;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -25,5 +27,15 @@ public interface MyQuestQuery {
     @Insert
     long insertMyQuest(MyQuest quest);
 
+    // أضف هذا السطر هنا:
+    @Update
+    void update(MyQuest quest);
+
+    @Delete
+    void delete(MyQuest quest);
+
+    @Query("SELECT * FROM MyQuest")
+    List<MyQuest> getAllQuests();
 }
+
 

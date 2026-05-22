@@ -33,6 +33,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     /**
      * دالة ثابتة للحصول على نسخة قاعدة البيانات.
+     *
      * @param context سياق التطبيق للوصول إلى الملفات.
      * @return نسخة مفعلة من AppDatabase.
      */

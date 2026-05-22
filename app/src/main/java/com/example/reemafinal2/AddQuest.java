@@ -28,6 +28,8 @@ public class AddQuest extends AppCompatActivity {
     // تعريف عناصر واجهة المستخدم لإدخال بيانات المهمة
     TextInputEditText etQuestTitle, etQuestTime, etQuestSubject, etGameId, etQuestNote, etQuestScore;
     Button btnAddQuest;
+    boolean isEditMode = false;
+    MyQuest questToEdit;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -43,11 +45,33 @@ public class AddQuest extends AppCompatActivity {
         etQuestNote = findViewById(R.id.etQuestNote);
         btnAddQuest = findViewById(R.id.btnAddQuest);
         etQuestScore = findViewById(R.id.etQuestScore);
+        Button btnCancel = findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(v -> {
+            finish(); // يغلق الشاشة فوراً دون تنفيذ saveQuest()
+        });
 
         // 2. إعداد المستمعات (Listeners)
         etQuestTime.setOnClickListener(v -> showTimePickerDialog()); // عند الضغط على حقل الوقت
-        btnAddQuest.setOnClickListener(v -> saveQuest()); // عند الضغط على زر الإضافة
+        btnAddQuest.setOnClickListener(v -> saveQuest());// عند الضغط على زر الإضافة
+        // داخل onCreate في AddQuest.java
+        // داخل onCreate في AddQuest.java
+        if (getIntent().hasExtra("QUEST_DATA")) {
+            isEditMode = true;
+            questToEdit = (MyQuest) getIntent().getSerializableExtra("QUEST_DATA");
+
+            // تعبئة الحقول بالبيانات الموجودة
+            etQuestTitle.setText(questToEdit.getTitle());
+            etQuestTime.setText(questToEdit.getTime());
+            etQuestSubject.setText(questToEdit.getSubject());
+            etGameId.setText(questToEdit.getGameId());
+            etQuestNote.setText(questToEdit.getNote());
+            etQuestScore.setText(String.valueOf(questToEdit.getRewardpoints()));
+
+            // تغيير نص الزر ليدل على التعديل
+            btnAddQuest.setText("Update Mission");
+        }
     }
+
 
     /**
      * عرض نافذة اختيار الوقت (Time Picker) للمستخدم.
@@ -77,7 +101,7 @@ public class AddQuest extends AppCompatActivity {
         String gameId = etGameId.getText().toString().trim();
         String note = etQuestNote.getText().toString().trim();
 
-        // تحويل النقاط إلى رقم مع معالجة الاستثناءات
+        // تحويل النقاط إلى رقم
         int score = 0;
         if (!etQuestScore.getText().toString().isEmpty()) {
             try {
@@ -93,17 +117,26 @@ public class AddQuest extends AppCompatActivity {
             return;
         }
 
-        // إنشاء كائن المهمة وتعبئة البيانات
-        MyQuest quest = new MyQuest();
+        // --- الجزء المحدث للهندسة المنطقية ---
+        MyQuest quest;
+        if (isEditMode) {
+            // إذا كنا في وضع التعديل، نستخدم الكائن الذي استقبلناه من الـ Intent
+            quest = questToEdit;
+        } else {
+            // إذا كانت مهمة جديدة، ننشئ كائناً جديداً ونعطيه معرفاً زمنياً
+            quest = new MyQuest();
+            quest.setKeyId(System.currentTimeMillis());
+        }
+
+        // تعبئة/تحديث بيانات الكائن من الحقول
         quest.setTitle(title);
         quest.setTime(time);
         quest.setSubject(subject);
         quest.setGameId(gameId);
         quest.setNote(note);
         quest.setRewardpoints(score);
-        quest.setKeyId(System.currentTimeMillis()); // معرف فريد للمهمة
 
-        // البدء بعملية الحفظ في السيرفر
+        // البدء بعملية الحفظ (سواء كانت إضافة أو تحديث)
         saveQuestToFirebase(quest);
     }
 
@@ -111,39 +144,50 @@ public class AddQuest extends AppCompatActivity {
      * حفظ المهمة في Firebase Realtime Database ثم حفظها محلياً في Room.
      */
     public void saveQuestToFirebase(MyQuest quest) {
-        // الوصول لمرجع "quests" في قاعدة البيانات
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference questsRef = database.child("quests");
 
-        // إنشاء معرّف فريد جديد للمهمة في السحاب
-        DatabaseReference newQuestRef = questsRef.push();
-        quest.setUserId(newQuestRef.getKey()); // تخزين المعرف داخل الكائن
+        DatabaseReference targetRef;
 
-        // رفع البيانات للسيرفر
-        newQuestRef.child(quest.getUserId()).setValue(quest).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "FB Task added successfully", Toast.LENGTH_SHORT).show();
+        if (isEditMode) {
+            // في حال التعديل: نذهب لنفس المعرف (UserId) الموجود مسبقاً في Firebase
+            targetRef = questsRef.child(quest.getUserId());
+        } else {
+            // في حال الإضافة: ننشئ مفتاحاً جديداً (push)
+            targetRef = questsRef.push();
+            quest.setUserId(targetRef.getKey()); // نخزن المفتاح الجديد داخل الكائن
+        }
 
-                    // بعد نجاح الرفع للسحابة، يتم الحفظ في قاعدة بيانات Room المحلية
-                    new Thread(() -> {
-                        try {
+        // الحفظ في Firebase (سواء كان تحديث أو إضافة جديدة)
+        // رفع البيانات مباشرة للمرجع الصحيح
+        targetRef.setValue(quest).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(getApplicationContext(), isEditMode ? "Updated in Firebase" : "Added to Firebase", Toast.LENGTH_SHORT).show();
+
+                new Thread(() -> {
+                    try {
+                        if (isEditMode) {
+                            AppDatabase.getDp(AddQuest.this).myTaskQuery().update(quest);
+                        } else {
+                            // تأكدي أن الدالة في الـ DAO ترجع long أو void
                             AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
-                            runOnUiThread(() -> {
-                                Toast.makeText(AddQuest.this, "Quest saved locally!", Toast.LENGTH_SHORT).show();
-                                finish(); // إغلاق الشاشة والعودة للقائمة
-                            });
-                        } catch (Exception e) {
-                            runOnUiThread(() -> {
-                                Toast.makeText(AddQuest.this, "Error saving local: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            });
                         }
-                    }).start();
 
-                } else {
-                    Toast.makeText(getApplicationContext(), "FB Failed to add task", Toast.LENGTH_SHORT).show();
-                }
+                        runOnUiThread(() -> {
+                            Toast.makeText(AddQuest.this, "Local Database Sync Done!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
+                    } catch (Exception e) {
+                        // إذا ظهر الخطأ مرة أخرى، هذا السطر سيخبرنا بالسبب الحقيقي في Logcat
+                        e.printStackTrace();
+                        runOnUiThread(() -> {
+                            Toast.makeText(AddQuest.this, "Room Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        });
+                    }
+                }).start();
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Firebase operation failed", Toast.LENGTH_SHORT).show();
             }
         });
     }

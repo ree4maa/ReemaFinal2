@@ -4,8 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity
-    public class MyQuest {
+//•أنت تعطي "تصريحاً" للأندرويد بأن هذا الكائن يمكن تحويله إلى مجموعة من البايتات (Bytes) ليتم نقله عبر الـ Intent.
+// •هذا ما سمح لسطر الكود intent.putExtra("QUEST_DATA", current); بأن يعمل بدون خطأ برمجياً.
+public class MyQuest implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public long keyId;
   public String title;
@@ -107,4 +111,6 @@ import androidx.room.PrimaryKey;
     }
 }
 
-
+//عندما تنتقل من شاشة إلى أخرى وتريد إرسال "نص" أو "رقم"، الأمر سهل لأن الأندرويد يعرف كيف يتعامل معها. لكنك هنا تحاول
+// إرسال كائن كامل (Object) وهو current (الذي هو من نوع MyQuest).الأندرويد لا يعرف كيف "يفكك" هذا الكائن ليحوله
+// إلى بيانات ويرسلها عبر الـ Intent ثم يعيد تجميعه في الشاشة التالية، إلا إذا أخبرته أن هذا الكلاس "قابل للتسلسل" (Serializable).
