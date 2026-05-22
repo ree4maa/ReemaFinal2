@@ -83,6 +83,7 @@ public class LevelFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     // جلب القيم من الـ Snapshot
+                    //لتحقق إذا كانت البيانات موجودة داخل قاعدة البيانات أم لا. fierbase
                     String name = snapshot.child("name").getValue(String.class);
                     Long level = snapshot.child("level").getValue(Long.class);
                     Long xp = snapshot.child("xp").getValue(Long.class);
@@ -131,6 +132,8 @@ public class LevelFragment extends Fragment {
     private void syncToLocal(String name, Long level, Long xp) {
         Executors.newSingleThreadExecutor().execute(() -> {
             // ملاحظة: يتم هنا استدعاء الـ DAO الخاص بك لتحديث بيانات المستخدم
+            //وهو كلاس أو Interface مسؤول عن الوصول إلى قاعدة البيانات وتنفيذ العمليات عليها
+            //هو قالب يحدد الدوال التي يجب على الكلاس تنفيذها، بدون كتابة تفاصيل التنفيذ داخله (غالبًا).
             // Example: localDb.userDao().updateUserData(name, level, xp);
         });
     }

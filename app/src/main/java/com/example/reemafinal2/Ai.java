@@ -40,6 +40,7 @@ public class Ai extends AppCompatActivity {
     private EditText etTopic;
     private MaterialButton btnSuggestSteps;
     private TextView tvAiResponse;
+    private MaterialButton btnStopSpeech;
     private MaterialCardView responseCard;
 
     // مرجع نموذج الذكاء الاصطناعي
@@ -58,6 +59,7 @@ public class Ai extends AppCompatActivity {
         btnSuggestSteps = findViewById(R.id.btnSuggestSteps);
         tvAiResponse = findViewById(R.id.tvAiResponse);
         responseCard = findViewById(R.id.responseCard);
+        btnStopSpeech = findViewById(R.id.btnStopSpeech);
 
         // 2. معالجة هوامش شريط الحالة (StatusBar) لضمان عدم تداخل التصميم
         View headerLayout = findViewById(R.id.header);
@@ -103,6 +105,13 @@ public class Ai extends AppCompatActivity {
         tvAiResponse.setOnLongClickListener(v -> {
             copyToClipboard(tvAiResponse.getText().toString());
             return true;
+        });
+
+        btnStopSpeech.setOnClickListener(v -> {
+            if (tts != null) {
+                tts.stop(); // يوقف الكلام فوراً
+                Toast.makeText(this, "Speech Muted", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
