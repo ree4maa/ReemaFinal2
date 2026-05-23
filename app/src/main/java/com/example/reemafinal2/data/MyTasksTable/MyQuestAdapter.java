@@ -101,13 +101,32 @@ public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
 
             /**
              * برمجة زر البدء (START):
-             * يفتح شاشة تنفيذ المهمة PlayQuestActivity.
+             * يفتح شاشة تنفيذ المهمة PlayQuestActivity ويمرر الكائن بالكامل.
              */
+            // برمجة زر البدء (START)
             btnstart.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), PlayQuestActivity.class);
-                intent.putExtra("QUEST_TITLE", current.getTitle());
-                getContext().startActivity(intent);
+                try {
+                    // نستخدمgetContext() بحذر، والأفضل التأكد من السياق
+                    Context context = v.getContext();
+                    Intent intent = new Intent(context, PlayQuestActivity.class);
+
+                    // تمرير البيانات
+                    intent.putExtra("QUEST_DATA", current);
+
+                    // إضافة Flag ضروري في حال كان الـ context ليس Activity
+                    if (!(context instanceof Activity)) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    }
+
+                    context.startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             });
+
+// احذفي vitem.setOnClickListener حالياً لتجنب التضارب
+// vitem.setOnClickListener... (امسحي هذا الجزء مؤقتاً)
 
             /**
              * برمجة زر الحذف (DELETE):
@@ -166,6 +185,7 @@ public class MyQuestAdapter extends ArrayAdapter<MyQuest> {
                 getContext().startActivity(intent);
             });
         }
+
 
         return vitem;
     }

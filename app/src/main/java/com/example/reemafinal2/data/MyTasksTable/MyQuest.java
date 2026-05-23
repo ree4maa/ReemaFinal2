@@ -3,7 +3,6 @@ package com.example.reemafinal2.data.MyTasksTable;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 import java.io.Serializable;
 
 @Entity

@@ -40,6 +40,10 @@
         <activity
             android:name=".SignUp"
             android:exported="true" />
+        <!-- أضيفي هذا السطر داخل الـ application وقبل إغلاقه -->
+        <activity
+            android:name=".PlayQuestActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

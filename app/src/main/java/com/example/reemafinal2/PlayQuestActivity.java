@@ -2,103 +2,102 @@ package com.example.reemafinal2;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.reemafinal2.data.MyTasksTable.MyQuest; // تأكدي من مسار الكلاس الصحيح عندك
+
 import java.util.Locale;
 
-/**
- * PlayQuestActivity: النشاط المسؤول عن تجربة تنفيذ المهمة.
- * يحتوي على مؤقت زمني وتفاعل عند الإنجاز.
- */
 public class PlayQuestActivity extends AppCompatActivity {
 
-    // عناصر واجهة المستخدم
     private TextView tvQuestTitle, tvTimer, tvInstructions;
     private Button btnDone;
 
-    // أدوات إدارة الوقت
     private CountDownTimer countDownTimer;
-    private long timeLeftInMillis = 30000; // مدة المهمة: 30 ثانية افتراضياً
+    private long timeLeftInMillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_quest);
 
-        // 1. ربط العناصر البرمجية بالـ IDs في XML
+        // 1. ربط العناصر
         tvQuestTitle = findViewById(R.id.tvQuestTitle);
         tvTimer = findViewById(R.id.tvTimer);
         tvInstructions = findViewById(R.id.tvInstructions);
-        btnDone = findViewById(R.id.btnDone);
+        btnDone = findViewById(R.id.btnfinish);
 
-        // 2. استقبال البيانات القادمة من شاشة القائمة (Intent Extras)
-        String title = getIntent().getStringExtra("QUEST_TITLE");
-        if (title != null) {
-            tvQuestTitle.setText(title); // عرض اسم المهمة التي تم اختيارها
+        // 2. استقبال كائن المهمة بالكامل من الـ Adapter
+        // تأكدي أن الاسم "QUEST_DATA" مطابق لما كتبتيه في الـ Adapter
+        MyQuest currentQuest = (MyQuest) getIntent().getSerializableExtra("QUEST_DATA");
+
+        if (currentQuest != null) {
+            // عرض البيانات الحقيقية
+            tvQuestTitle.setText(currentQuest.getTitle());
+            tvInstructions.setText(currentQuest.getNote());
+
+            // تحويل الوقت من المهمة (افترضنا أن الوقت مخزن كدقائق في الكائن)
+            // إذا كان الوقت مخزن بصيغة "00:30"، سنقوم بتحويله لملي ثانية
+            parseTimeAndStart(currentQuest.getTime());
         }
 
-        // 3. بدء العداد التنازلي فور الدخول
-        startTimer();
-
-        // 4. برمجة زر "تم الإنجاز"
+        // 3. برمجة زر "تم الإنجاز"
         btnDone.setOnClickListener(v -> {
-            // إيقاف العداد عند ضغط الزر
-            if (countDownTimer != null) {
-                countDownTimer.cancel();
-            }
-            // إظهار رسالة نجاح
+            if (countDownTimer != null) countDownTimer.cancel();
             Toast.makeText(this, "Quest Completed! Well done!", Toast.LENGTH_LONG).show();
-
-            // العودة التلقائية لشاشة القائمة
             finish();
         });
     }
 
     /**
-     * دالة لبدء العد التنازلي وتحديث الواجهة كل ثانية.
+     * دالة لتحويل نص الوقت (مثل "05:00") إلى ميلي ثانية وبدء العداد
      */
+    private void parseTimeAndStart(String timeStr) {
+        try {
+            if (timeStr != null && timeStr.contains(":")) {
+                String[] parts = timeStr.split(":");
+                int minutes = Integer.parseInt(parts[0]);
+                int seconds = Integer.parseInt(parts[1]);
+                timeLeftInMillis = (minutes * 60L + seconds) * 1000;
+            } else {
+                timeLeftInMillis = 30000; // وقت افتراضي 30 ثانية إذا حصل خطأ
+            }
+        } catch (Exception e) {
+            timeLeftInMillis = 30000;
+        }
+        startTimer();
+    }
+
     private void startTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMillis = millisUntilFinished;
-                updateCountDownText(); // تحديث النص الظاهر (00:00)
+                updateCountDownText();
             }
 
             @Override
             public void onFinish() {
-                // ما يحدث عند انتهاء الوقت تماماً
                 tvTimer.setText("00:00");
                 Toast.makeText(PlayQuestActivity.this, "Time's up!", Toast.LENGTH_SHORT).show();
             }
         }.start();
     }
 
-    /**
-     * تحويل الوقت المتبقي إلى تنسيق دقائق وثواني مفهوم للمستخدم.
-     */
     private void updateCountDownText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
-
-        // تنسيق النص ليكون دائماً بصيغة رقمين (مثلاً 09:05 بدلاً من 9:5)
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         tvTimer.setText(timeLeftFormatted);
     }
 
-    /**
-     * دالة الأمان: إغلاق العداد عند تدمير النشاط لضمان عدم استهلاك البطارية أو الذاكرة.
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+        if (countDownTimer != null) countDownTimer.cancel();
     }
 }
