@@ -15,7 +15,7 @@ import java.util.Locale;
 public class PlayQuestActivity extends AppCompatActivity {
 
     private TextView tvQuestTitle, tvTimer, tvInstructions;
-    private Button btnDone;
+    private Button btnDone ;
 
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
@@ -30,7 +30,29 @@ public class PlayQuestActivity extends AppCompatActivity {
         tvTimer = findViewById(R.id.tvTimer);
         tvInstructions = findViewById(R.id.tvInstructions);
         btnDone = findViewById(R.id.btnfinish);
+        // 1. تعريف الزر وربطه بالـ XML
+        Button btnStop = findViewById(R.id.btnStop);
 
+        // متغير لمتابعة حالة العداد (هل هو متوقف أم يعمل)
+        final boolean[] isPaused = {false};
+
+        btnStop.setOnClickListener(v -> {
+            if (countDownTimer != null) {
+                if (!isPaused[0]) {
+                    // إذا كان يعمل -> نقوم بإيقافه (Pause)
+                    countDownTimer.cancel();
+                    isPaused[0] = true;
+                    btnStop.setText("RESUME"); // تغيير النص ليوضح إمكانية العودة
+                    Toast.makeText(this, "Timer Paused", Toast.LENGTH_SHORT).show();
+                } else {
+                    // إذا كان متوقفاً -> نعيد تشغيله من الوقت المتبقي (Resume)
+                    startTimer();
+                    isPaused[0] = false;
+                    btnStop.setText("STOP");
+                    Toast.makeText(this, "Timer Resumed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         // 2. استقبال كائن المهمة بالكامل من الـ Adapter
         // تأكدي أن الاسم "QUEST_DATA" مطابق لما كتبتيه في الـ Adapter
         MyQuest currentQuest = (MyQuest) getIntent().getSerializableExtra("QUEST_DATA");

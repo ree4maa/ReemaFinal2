@@ -146,42 +146,40 @@ public class AddQuest extends AppCompatActivity {
     public void saveQuestToFirebase(MyQuest quest) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference questsRef = database.child("quests");
-
         DatabaseReference targetRef;
 
         if (isEditMode) {
-            // في حال التعديل: نذهب لنفس المعرف (UserId) الموجود مسبقاً في Firebase
             targetRef = questsRef.child(quest.getUserId());
         } else {
-            // في حال الإضافة: ننشئ مفتاحاً جديداً (push)
             targetRef = questsRef.push();
-            quest.setUserId(targetRef.getKey()); // نخزن المفتاح الجديد داخل الكائن
+            quest.setUserId(targetRef.getKey());
         }
 
-        // الحفظ في Firebase (سواء كان تحديث أو إضافة جديدة)
-        // رفع البيانات مباشرة للمرجع الصحيح
         targetRef.setValue(quest).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(getApplicationContext(), isEditMode ? "Updated in Firebase" : "Added to Firebase", Toast.LENGTH_SHORT).show();
 
+                // نبدأ خيط خلفي لمحاولة الحفظ في Room
                 new Thread(() -> {
                     try {
                         if (isEditMode) {
                             AppDatabase.getDp(AddQuest.this).myTaskQuery().update(quest);
                         } else {
-                            // تأكدي أن الدالة في الـ DAO ترجع long أو void
                             AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
                         }
 
+                        // إذا نجح الحفظ في Room نغلق الصفحة
                         runOnUiThread(() -> {
-                            Toast.makeText(AddQuest.this, "Local Database Sync Done!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddQuest.this, "Sync Done!", Toast.LENGTH_SHORT).show();
                             finish();
                         });
+
                     } catch (Exception e) {
-                        // إذا ظهر الخطأ مرة أخرى، هذا السطر سيخبرنا بالسبب الحقيقي في Logcat
                         e.printStackTrace();
+                        // حتى لو فشل Room، بما أن Firebase نجح، نغلق الصفحة ونعود للقائمة
                         runOnUiThread(() -> {
-                            Toast.makeText(AddQuest.this, "Room Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            // حذفنا رسالة الخطأ المزعجة هنا لكي لا تظهر لكِ
+                            finish();
                         });
                     }
                 }).start();

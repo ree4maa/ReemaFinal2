@@ -15,7 +15,7 @@ import com.example.reemafinal2.data.MyUser.MyPlayerQuery;
  * AppDatabase: الكلاس المسؤول عن إعداد وإدارة قاعدة بيانات Room المحلية.
  * يجمع بين جداول المستخدمين والمهام ويوفر طرق الوصول إليها.
  */
-@Database(entities = {MyPlayer.class, MyQuest.class}, version = 3)
+@Database(entities = {MyPlayer.class, MyQuest.class}, version = 4)
 public abstract class AppDatabase extends RoomDatabase {
 
     // نسخة ثابتة واحدة من قاعدة البيانات (Singleton Instance)
