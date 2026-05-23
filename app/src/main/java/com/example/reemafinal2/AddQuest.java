@@ -3,7 +3,7 @@ package com.example.reemafinal2;
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import androidx.annotation.NonNull; // تم تصحيح المكتبة
+import androidx.annotation.NonNull;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -20,17 +20,33 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * AddQuest: النشاط المسؤول عن إنشاء مهام جديدة وحفظها.
- * يجمع بين إدخال البيانات، اختيار الوقت، والحفظ في Firebase و Room.
+ * <h1>نشاط إضافة وتعديل المهام (AddQuest)</h1>
+ * المسؤول عن واجهة المستخدم لإدخال بيانات المهمة (العنوان، الوقت، النقاط، إلخ).
+ * يقوم بمعالجة البيانات وحفظها في قاعدة بيانات Firebase السحابية وقاعدة بيانات Room المحلية.
+ *
+ * @author Reema
+ * @version 2.0
  */
 public class AddQuest extends AppCompatActivity {
 
-    // تعريف عناصر واجهة المستخدم لإدخال بيانات المهمة
+    /** حقول إدخال النصوص لبيانات المهمة */
     TextInputEditText etQuestTitle, etQuestTime, etQuestSubject, etGameId, etQuestNote, etQuestScore;
+
+    /** زر حفظ أو تحديث المهمة */
     Button btnAddQuest;
+
+    /** متغير منطقي لتحديد ما إذا كان النشاط في وضع التعديل أم إضافة جديدة */
     boolean isEditMode = false;
+
+    /** كائن المهمة المراد تعديله في حال كان وضع التعديل مفعلاً */
     MyQuest questToEdit;
 
+    /**
+     * دالة إنشاء النشاط وإعداد واجهة المستخدم.
+     * يتم فيها ربط العناصر، إعداد المستمعات، وفحص ما إذا كان هناك بيانات مرسلة للتعديل.
+     *
+     * @param savedInstanceState حالة النشاط المحفوظة
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +54,24 @@ public class AddQuest extends AppCompatActivity {
         setContentView(R.layout.activity_add_quest);
 
         // 1. ربط العناصر البرمجية بالـ IDs الموجودة في ملف XML
+        initializeViews();
+
+        // 2. إعداد المستمع لزر الإلغاء
+        Button btnCancel = findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(v -> finish());
+
+        // 3. إعداد المستمعات لحقول الإدخال والأزرار
+        etQuestTime.setOnClickListener(v -> showTimePickerDialog());
+        btnAddQuest.setOnClickListener(v -> saveQuest());
+
+        // 4. فحص Intent لاستقبال بيانات المهمة في حال التعديل
+        checkForEditMode();
+    }
+
+    /**
+     * ربط متغيرات الجافا بالعناصر المرئية في ملف XML.
+     */
+    private void initializeViews() {
         etQuestTitle = findViewById(R.id.etQuestTitle);
         etQuestTime = findViewById(R.id.etQuestTime);
         etQuestSubject = findViewById(R.id.etQuestSubject);
@@ -45,21 +79,17 @@ public class AddQuest extends AppCompatActivity {
         etQuestNote = findViewById(R.id.etQuestNote);
         btnAddQuest = findViewById(R.id.btnAddQuest);
         etQuestScore = findViewById(R.id.etQuestScore);
-        Button btnCancel = findViewById(R.id.btnCancel);
-        btnCancel.setOnClickListener(v -> {
-            finish(); // يغلق الشاشة فوراً دون تنفيذ saveQuest()
-        });
+    }
 
-        // 2. إعداد المستمعات (Listeners)
-        etQuestTime.setOnClickListener(v -> showTimePickerDialog()); // عند الضغط على حقل الوقت
-        btnAddQuest.setOnClickListener(v -> saveQuest());// عند الضغط على زر الإضافة
-        // داخل onCreate في AddQuest.java
-        // داخل onCreate في AddQuest.java
+    /**
+     * فحص البيانات القادمة من النشاط السابق.
+     * إذا وُجدت بيانات مهمة، يتم تعبئة الحقول وتغيير نمط الصفحة إلى "تعديل".
+     */
+    private void checkForEditMode() {
         if (getIntent().hasExtra("QUEST_DATA")) {
             isEditMode = true;
             questToEdit = (MyQuest) getIntent().getSerializableExtra("QUEST_DATA");
 
-            // تعبئة الحقول بالبيانات الموجودة
             etQuestTitle.setText(questToEdit.getTitle());
             etQuestTime.setText(questToEdit.getTime());
             etQuestSubject.setText(questToEdit.getSubject());
@@ -67,14 +97,13 @@ public class AddQuest extends AppCompatActivity {
             etQuestNote.setText(questToEdit.getNote());
             etQuestScore.setText(String.valueOf(questToEdit.getRewardpoints()));
 
-            // تغيير نص الزر ليدل على التعديل
             btnAddQuest.setText("Update Mission");
         }
     }
 
-
     /**
      * عرض نافذة اختيار الوقت (Time Picker) للمستخدم.
+     * تقوم بتنسيق الوقت المختار بصيغة (HH:mm) ووضعه في حقل إدخال الوقت.
      */
     private void showTimePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
@@ -83,7 +112,6 @@ public class AddQuest extends AppCompatActivity {
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, hourOfDay, minuteOfHour) -> {
-                    // تنسيق الوقت المختار ليظهر بصيغة 00:00
                     String time = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minuteOfHour);
                     etQuestTime.setText(time);
                 }, hour, minute, true);
@@ -92,7 +120,8 @@ public class AddQuest extends AppCompatActivity {
     }
 
     /**
-     * تجميع البيانات من الحقول والتحقق من صحتها قبل الحفظ.
+     * دالة التحقق من صحة البيانات وبدء عملية الحفظ.
+     * تقوم بجمع النصوص من الحقول، التحقق من الحقول الإجبارية، وإنشاء أو تحديث كائن {@link MyQuest}.
      */
     private void saveQuest() {
         String title = etQuestTitle.getText().toString().trim();
@@ -101,7 +130,6 @@ public class AddQuest extends AppCompatActivity {
         String gameId = etGameId.getText().toString().trim();
         String note = etQuestNote.getText().toString().trim();
 
-        // تحويل النقاط إلى رقم
         int score = 0;
         if (!etQuestScore.getText().toString().isEmpty()) {
             try {
@@ -111,24 +139,19 @@ public class AddQuest extends AppCompatActivity {
             }
         }
 
-        // التحقق من الحقول الإجبارية
         if (title.isEmpty() || time.isEmpty()) {
             Toast.makeText(this, "Please fill in Title and Time", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // --- الجزء المحدث للهندسة المنطقية ---
         MyQuest quest;
         if (isEditMode) {
-            // إذا كنا في وضع التعديل، نستخدم الكائن الذي استقبلناه من الـ Intent
             quest = questToEdit;
         } else {
-            // إذا كانت مهمة جديدة، ننشئ كائناً جديداً ونعطيه معرفاً زمنياً
             quest = new MyQuest();
             quest.setKeyId(System.currentTimeMillis());
         }
 
-        // تعبئة/تحديث بيانات الكائن من الحقول
         quest.setTitle(title);
         quest.setTime(time);
         quest.setSubject(subject);
@@ -136,12 +159,14 @@ public class AddQuest extends AppCompatActivity {
         quest.setNote(note);
         quest.setRewardpoints(score);
 
-        // البدء بعملية الحفظ (سواء كانت إضافة أو تحديث)
         saveQuestToFirebase(quest);
     }
 
     /**
-     * حفظ المهمة في Firebase Realtime Database ثم حفظها محلياً في Room.
+     * حفظ المهمة في قاعدة بيانات Firebase.
+     * عند نجاح الحفظ السحابي، يتم استدعاء الخيط الخلفي لحفظ البيانات في قاعدة Room المحلية.
+     *
+     * @param quest كائن المهمة الذي يحتوي على كافة البيانات المراد حفظها.
      */
     public void saveQuestToFirebase(MyQuest quest) {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
@@ -159,34 +184,40 @@ public class AddQuest extends AppCompatActivity {
             if (task.isSuccessful()) {
                 Toast.makeText(getApplicationContext(), isEditMode ? "Updated in Firebase" : "Added to Firebase", Toast.LENGTH_SHORT).show();
 
-                // نبدأ خيط خلفي لمحاولة الحفظ في Room
-                new Thread(() -> {
-                    try {
-                        if (isEditMode) {
-                            AppDatabase.getDp(AddQuest.this).myTaskQuery().update(quest);
-                        } else {
-                            AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
-                        }
-
-                        // إذا نجح الحفظ في Room نغلق الصفحة
-                        runOnUiThread(() -> {
-                            Toast.makeText(AddQuest.this, "Sync Done!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        });
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        // حتى لو فشل Room، بما أن Firebase نجح، نغلق الصفحة ونعود للقائمة
-                        runOnUiThread(() -> {
-                            // حذفنا رسالة الخطأ المزعجة هنا لكي لا تظهر لكِ
-                            finish();
-                        });
-                    }
-                }).start();
+                // حفظ البيانات محلياً في خيط منفصل لتجنب تعليق واجهة المستخدم
+                saveQuestToRoom(quest);
 
             } else {
                 Toast.makeText(getApplicationContext(), "Firebase operation failed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * حفظ المهمة في قاعدة البيانات المحلية (Room).
+     * يتم إغلاق النشاط والعودة للقائمة فور الانتهاء أو في حال حدوث خطأ بعد نجاح Firebase.
+     *
+     * @param quest كائن المهمة المراد حفظه محلياً.
+     */
+    private void saveQuestToRoom(MyQuest quest) {
+        new Thread(() -> {
+            try {
+                if (isEditMode) {
+                    AppDatabase.getDp(AddQuest.this).myTaskQuery().update(quest);
+                } else {
+                    AppDatabase.getDp(AddQuest.this).myTaskQuery().insertMyQuest(quest);
+                }
+
+                runOnUiThread(() -> {
+                    Toast.makeText(AddQuest.this, "Sync Done!", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // العودة للقائمة حتى لو فشل Room لأن البيانات حُفظت في Firebase
+                runOnUiThread(this::finish);
+            }
+        }).start();
     }
 }
